@@ -5,6 +5,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "Z80Instructions/Z80Instructions.h"
 #include "Z80.h"
 
 namespace Z80Instructions
@@ -359,70 +360,70 @@ namespace Z80Instructions
 
 	OPCodeFunc s_opcode_ed_funcs [256] = 
 	{
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0x40,
 		&opcodesED0x41,
 		&opcodesED0x42,
@@ -435,185 +436,184 @@ namespace Z80Instructions
 		&opcodesED0x49,
 		&opcodesED0x4a,
 		&opcodesED0x4b,
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
 		&opcodesED0x4d,
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
 		&opcodesED0x4f,
 		&opcodesED0x50,
 		&opcodesED0x51,
 		&opcodesED0x52,
 		&opcodesED0x53,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0x56,
 		&opcodesED0x57,
 		&opcodesED0x58,
 		&opcodesED0x59,
 		&opcodesED0x5a,
 		&opcodesED0x5b,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0x5e,
 		&opcodesED0x5f,
 		&opcodesED0x60,
 		&opcodesED0x61,
 		&opcodesED0x62,
 		&opcodesED0x63,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0x67,
 		&opcodesED0x68,
 		&opcodesED0x69,
 		&opcodesED0x6a,
 		&opcodesED0x6b,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0x6f,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0x72,
 		&opcodesED0x73,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0x78,
 		&opcodesED0x79,
 		&opcodesED0x7a,
 		&opcodesED0x7b,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0xa0,
 		&opcodesED0xa1,
 		&opcodesED0xa2,
 		&opcodesED0xa3,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0xa8,
 		&opcodesED0xa9,
 		&opcodesED0xaa,
 		&opcodesED0xab,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0xb0,
 		&opcodesED0xb1,
 		&opcodesED0xb2,
 		&opcodesED0xb3,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 		&opcodesED0xb8,
 		&opcodesED0xb9,
 		&opcodesED0xba,
 		&opcodesED0xbb,
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
-		&UnexpectedOPCode
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
+		&UnexpectedOPCode,
 	};
 }

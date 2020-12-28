@@ -110,7 +110,7 @@ def create_header():
         text = init_comment
         text += '#pragma once\n\n#include <stdint.h>\n#include "Z80.h"\n\nnamespace Z80Instructions\n{\n'
         text += create_opcodes_functions('op_codes.txt', 'opcodes', opcode_timings)      
-        text += '\tuint8_t UnexpectedOPCode(Z80& cpu)\n\t{\n\t\tcpu.UNUSED();\n\t\treturn 4;\n\t}\n\n'  
+        text += '\tinline uint8_t UnexpectedOPCode(Z80& cpu)\n\t{\n\t\tcpu.UNUSED();\n\t\treturn 4;\n\t}\n\n'  
         text += '\tOPCodeFunc s_opcode_funcs [256] = \n\t{\n'
         for i in  range(256):
             text += '\t\t&opcodes0x%s%s\n' % (format(i, '02x'), ',' if i < 255 else '')            
@@ -123,14 +123,14 @@ def create_cb_headers():
     store_set = set()
     with open('../Z80Instructions/Z80CBInstructions.h', 'w+') as file:
         text = init_comment
-        text += '#pragma once\n\n#include <stdint.h>\n#include "Z80.h"\n\nnamespace Z80Instructions\n{\n'
+        text += '#pragma once\n\n#include <stdint.h>\n#include "Z80Instructions/Z80Instructions.h"\n#include "Z80.h"\n\nnamespace Z80Instructions\n{\n'
         text += create_opcodes_functions('op_codes_cb.txt', 'opcodesCB', opcode_timings_cb, store_set)       
         text += '\tOPCodeFunc s_opcode_cb_funcs [256] = \n\t{\n'
         for i in range(256):
             if i in store_set:
-                text += '\t\t&opcodesED0x%s%s\n' % (format(i, '02x'), ',' if i < 255 else '')
+                text += '\t\t&opcodesCB0x%s%s\n' % (format(i, '02x'), ',' if i < 255 else '')
             else:
-                text += '\t\t&UnexpectedOPCode\n'           
+                text += '\t\t&UnexpectedOPCode%s\n' % ',' if i < 255 else ''
         text += '\t};\n'
         text += '}\n'
         file.write(text)
@@ -140,14 +140,14 @@ def create_ed_headers():
     store_set = set()
     with open('../Z80Instructions/Z80EDInstructions.h', 'w+') as file:
         text = init_comment
-        text += '#pragma once\n\n#include <stdint.h>\n#include "Z80.h"\n\nnamespace Z80Instructions\n{\n'
+        text += '#pragma once\n\n#include <stdint.h>\n#include "Z80Instructions/Z80Instructions.h"\n#include "Z80.h"\n\nnamespace Z80Instructions\n{\n'
         text += create_opcodes_functions('op_codes_ed.txt', 'opcodesED', opcode_timings_ed, store_set)
         text += '\tOPCodeFunc s_opcode_ed_funcs [256] = \n\t{\n'
         for i in range(256):
             if i in store_set:
                 text += '\t\t&opcodesED0x%s%s\n' % (format(i, '02x'), ',' if i < 255 else '')
             else:
-                text += '\t\t&UnexpectedOPCode\n'
+                text += '\t\t&UnexpectedOPCode%s\n' % ',' if i < 255 else ''
         text += '\t};\n'
         text += '}\n'
         file.write(text)

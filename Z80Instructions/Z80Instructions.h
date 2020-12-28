@@ -1545,7 +1545,7 @@ namespace Z80Instructions
 		return 11;
 	};
 
-	uint8_t UnexpectedOPCode(Z80& cpu)
+	inline uint8_t UnexpectedOPCode(Z80& cpu)
 	{
 		cpu.UNUSED();
 		return 4;
