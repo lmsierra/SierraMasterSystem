@@ -90,6 +90,9 @@ public:
 	word m_reg_refresh; // increments with each opcode.
 	word m_reg_interrupt; //
 
+	byte m_reg_I;
+	byte m_reg_R;
+
 private:
 	uint32_t m_cycle_count; // cycles that needs the opcode.
 
@@ -164,6 +167,7 @@ public:
 	void LD_DDNN(word& reg);
 	void LD_DDNN(byte& reg);
 	void LD_NNDD(Register& reg);
+	void LD_NNDD(word& reg);
 	void LD_NNDD(byte data);
 	void LD_HL_N();
 	void LD_SP_HL();

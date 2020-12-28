@@ -1,9 +1,11 @@
 #include "Z80.h"
 #include "Memory.h"
 #include "Z80Instructions/Z80Instructions.h"
+#include "Z80Instructions/Z80CBInstructions.h"
+#include "Z80Instructions/Z80EDInstructions.h"
+#include <assert.h>
 
 #include <iostream>
-#include <assert.h>
 
 Z80::Z80() :
 	m_memory		  (new Memory()),
@@ -17,6 +19,8 @@ Z80::Z80() :
 	m_reg_HL_shadow   (0x0000),
 	m_reg_IX		  (0xFFFF),
 	m_reg_IY          (0xFFFF),
+	m_reg_I			  (0x0000),
+	m_reg_R			  (0x0000),
 	m_program_counter (0x0000),
 	m_stack_pointer   (0xDFF0),
 	m_cycle_count     (0x0000),
@@ -39,6 +43,8 @@ Z80::~Z80()
 
 uint32_t Z80::Tick()
 {
+	m_cycle_count = 0;
+
 	byte opcode = ReadByte();
 	ProcessOPCode(opcode, Z80Instructions::s_opcode_funcs);
 	
@@ -52,7 +58,8 @@ void Z80::ProcessOPCode(byte opcode, OPCodeFunc funcs [256])
 	
 	IncrementRefresh();
 
-	m_cycle_count = funcs[opcode](*this);
+	// TODO: Needs adjustment for branchs in opcodes.
+	m_cycle_count += funcs[opcode](*this);
 }
 
 void Z80::IncrementRefresh()
@@ -655,6 +662,13 @@ void Z80::LD_NNDD(Register& reg)
 	m_memory->WriteMemory(address+1, reg.hi);
 }
 
+void Z80::LD_NNDD(word& reg)
+{
+	const word address = ReadWord();
+	m_memory->WriteMemory(address, static_cast<byte>(reg & 0x00FF));
+	m_memory->WriteMemory(address + 1, static_cast<byte>(reg >> 8));
+}
+
 void Z80::LD_NNDD(byte data)
 {
 	const word address = ReadWord();
@@ -744,7 +758,7 @@ void Z80::LDIR()
 void Z80::LD_AR()
 {
 	// LD A,R
-	const byte value = m_reg_refresh;
+	const byte value = m_reg_R;;
 	LD(m_reg_AF.hi, value);
 
 	WriteFlag(SIGN,            value & 0x80);
@@ -757,7 +771,7 @@ void Z80::LD_AR()
 void Z80::LD_AI()
 {
 	 // LD A,I
-	const byte value = m_reg_interrupt;
+	const byte value = m_reg_I;
 	LD(m_reg_AF.hi, value);
 
 	WriteFlag(SIGN, value & 0x80);
