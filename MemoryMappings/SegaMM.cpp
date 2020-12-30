@@ -12,6 +12,13 @@ SegaMM::~SegaMM()
 
 }
 
+/*
+    When reading and writing, maybe pagination is needed.
+    Now it can be solved by reading the cartridge memory instead of
+    copying memory into the processor one, but back in the day I assume
+    it was copied.
+    If it outperforms badly, change the copies for just accessing the memory instead.
+*/
 byte SegaMM::ReadMemory(word address)
 {
     assert(address >= 0x0000 && address < 0x10000 && "Trying to write memory out of bounds");

@@ -54,7 +54,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0x47(Z80& cpu)
 	{
-		cpu.LD(cpu.m_reg_I, cpu.m_reg_AF.hi);
+		cpu.LD(cpu.m_reg_interrupt, cpu.m_reg_AF.hi);
 		return 9;
 	};
 
@@ -90,7 +90,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0x4f(Z80& cpu)
 	{
-		cpu.LD(cpu.m_reg_R, cpu.m_reg_AF.hi);
+		cpu.LD(cpu.m_reg_refresh, cpu.m_reg_AF.hi);
 		return 9;
 	};
 

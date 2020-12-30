@@ -87,11 +87,8 @@ public:
 
 	word m_program_counter; // points to next opcode
 	word m_stack_pointer; // next address to store variable in stack.
-	word m_reg_refresh; // increments with each opcode.
-	word m_reg_interrupt; //
-
-	byte m_reg_I;
-	byte m_reg_R;
+	byte m_reg_refresh; // increments with each opcode.
+	byte m_reg_interrupt; //
 
 private:
 	uint32_t m_cycle_count; // cycles that needs the opcode.

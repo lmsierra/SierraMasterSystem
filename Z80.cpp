@@ -19,14 +19,12 @@ Z80::Z80() :
 	m_reg_HL_shadow   (0x0000),
 	m_reg_IX		  (0xFFFF),
 	m_reg_IY          (0xFFFF),
-	m_reg_I			  (0x0000),
-	m_reg_R			  (0x0000),
 	m_program_counter (0x0000),
 	m_stack_pointer   (0xDFF0),
 	m_cycle_count     (0x0000),
 	m_current_prefix  (0x0000),
-	m_reg_interrupt   (0x0000),
-	m_reg_refresh	  (0x0000),
+	m_reg_interrupt   (0x00),
+	m_reg_refresh	  (0x00),
 	m_halt			  (false),
 	m_IFF1            (false),
 	m_IFF2            (false),
@@ -758,7 +756,7 @@ void Z80::LDIR()
 void Z80::LD_AR()
 {
 	// LD A,R
-	const byte value = m_reg_R;;
+	const byte value = m_reg_refresh;
 	LD(m_reg_AF.hi, value);
 
 	WriteFlag(SIGN,            value & 0x80);
@@ -771,7 +769,7 @@ void Z80::LD_AR()
 void Z80::LD_AI()
 {
 	 // LD A,I
-	const byte value = m_reg_I;
+	const byte value = m_reg_interrupt;
 	LD(m_reg_AF.hi, value);
 
 	WriteFlag(SIGN, value & 0x80);
