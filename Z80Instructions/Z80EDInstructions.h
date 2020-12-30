@@ -312,50 +312,42 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0xb0(Z80& cpu)
 	{
-		cpu.LDIR();
-		return 16;
+		return 21 ? cpu.LDIR() : 16;
 	};
 
 	inline uint8_t opcodesED0xb1(Z80& cpu)
 	{
-		cpu.CPIR();
-		return 16;
+		return 21 ? cpu.CPIR() : 16;
 	};
 
 	inline uint8_t opcodesED0xb2(Z80& cpu)
 	{
-		cpu.INIR();
-		return 16;
+		return 21 ? cpu.INIR() : 16;
 	};
 
 	inline uint8_t opcodesED0xb3(Z80& cpu)
 	{
-		cpu.OTIR();
-		return 16;
+		return 21 ? cpu.OTIR() : 16;
 	};
 
 	inline uint8_t opcodesED0xb8(Z80& cpu)
 	{
-		cpu.LDDR();
-		return 16;
+		return 21 ? cpu.LDDR() : 16;
 	};
 
 	inline uint8_t opcodesED0xb9(Z80& cpu)
 	{
-		cpu.CPDR();
-		return 16;
+		return 21 ? cpu.CPDR() : 16;
 	};
 
 	inline uint8_t opcodesED0xba(Z80& cpu)
 	{
-		cpu.INDR();
-		return 16;
+		return 21 ? cpu.INDR() : 16;
 	};
 
 	inline uint8_t opcodesED0xbb(Z80& cpu)
 	{
-		cpu.OUTR();
-		return 16;
+		return 21 ? cpu.OUTR() : 16;
 	};
 
 	OPCodeFunc s_opcode_ed_funcs [256] = 

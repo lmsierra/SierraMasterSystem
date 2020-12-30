@@ -56,7 +56,6 @@ void Z80::ProcessOPCode(byte opcode, OPCodeFunc funcs [256])
 	
 	IncrementRefresh();
 
-	// TODO: Needs adjustment for branchs in opcodes.
 	m_cycle_count += funcs[opcode](*this);
 }
 
@@ -281,10 +280,13 @@ void Z80::CALL()
 	m_program_counter = lo + (hi << 8);
 }
 
-void Z80::CALL(bool cond)
+bool Z80::CALL(bool cond)
 {
-	if (cond)
-		CALL();
+	if (!cond)
+		return false;
+
+	CALL();
+	return true;
 }
 
 void Z80::CCF()
@@ -324,7 +326,7 @@ void Z80::CPD()
 	--m_reg_BC.value;
 }
 
-void Z80::CPDR()
+bool Z80::CPDR()
 {
 	const byte value = m_memory->ReadMemory(m_reg_HL.value);
 	CP(value);
@@ -333,9 +335,10 @@ void Z80::CPDR()
 	--m_reg_BC.value;
 
 	if (m_reg_BC.value - 1 == 0 || value != m_reg_AF.hi)
-		return;
+		return false;
 
 	m_program_counter -= 2;
+	return true;
 }
 
 void Z80::CPI()
@@ -352,7 +355,7 @@ void Z80::CPI()
 	WriteFlag(ADD_SUBSTRACT,   0);
 }
 
-void Z80::CPIR()
+bool Z80::CPIR()
 {
 	const byte value = m_memory->ReadMemory(m_reg_HL.value);
 
@@ -368,7 +371,9 @@ void Z80::CPIR()
 	if (m_reg_BC.value == 0 && value == m_reg_AF.hi)
 	{
 		m_program_counter -= 2;
+		return true;
 	}
+	return false;
 }
 
 void Z80::CPL()
@@ -450,17 +455,19 @@ void Z80::DEC_HL()
 	WriteFlag(SIGN,  result & 0x80);
 }
 
-void Z80::DJNZ()
+bool Z80::DJNZ()
 {
 	--m_reg_BC.hi;
 	if (m_reg_BC.hi == 0)
 	{
 		const byte dis = m_memory->ReadMemory(m_program_counter);
 		m_program_counter += dis;
+		return true;
 	}
 	else
 	{
 		++m_program_counter;
+		return false;
 	}
 }
 
@@ -544,9 +551,10 @@ void Z80::IND()
 	// static_assert(false, "To implement");
 }
 
-void Z80::INDR()
+bool Z80::INDR()
 {
 	// static_assert(false, "To implement");
+	return false;
 }
 
 void Z80::INC(byte& reg)
@@ -580,9 +588,10 @@ void Z80::INI()
 	// static_assert(false, "Falta implementar");
 }
 
-void Z80::INIR()
+bool Z80::INIR()
 {
 	// static_assert(false, "Falta implementar");
+	return false;
 }
 
 void Z80::JP()
@@ -612,12 +621,18 @@ void Z80::JR()
 	m_program_counter = value + 1 + (m_memory->ReadMemory(value));
 }
 
-void Z80::JR(bool cond)
+bool Z80::JR(bool cond)
 {
 	if (cond)
+	{
 		JR();
+		return true;
+	}
 	else
+	{
 		++m_program_counter;
+		return false;
+	}
 }
 
 void Z80::LD(byte& reg, byte data)
@@ -701,7 +716,7 @@ void Z80::LDD()
 	WriteFlag(ADD_SUBSTRACT,   0);
 }
 
-void Z80::LDDR()
+bool Z80::LDDR()
 {
 	const byte value = m_memory->ReadMemory(m_reg_HL.value);
 	m_memory->WriteMemory(m_reg_DE.value, value);
@@ -715,9 +730,10 @@ void Z80::LDDR()
 	WriteFlag(ADD_SUBSTRACT,   0);
 
 	if (m_reg_BC.value == 0)
-		return;
+		return false;
 
 	m_program_counter -= 2;
+	return true;
 }
 
 void Z80::LDI()
@@ -734,7 +750,7 @@ void Z80::LDI()
 	WriteFlag(PARITY_OVERFLOW, m_reg_BC.value - 1 != 0);
 }
 
-void Z80::LDIR()
+bool Z80::LDIR()
 {
 	const byte result = m_memory->ReadMemory(m_reg_HL.value);
 	m_memory->WriteMemory(m_reg_DE.value, result);
@@ -748,9 +764,10 @@ void Z80::LDIR()
 	WriteFlag(PARITY_OVERFLOW, m_reg_BC.value - 1 != 0);
 	
 	if (m_reg_BC.value == 0)
-		return;
+		return false;
 
 	m_program_counter -= 2;
+	return true;
 }
 
 void Z80::LD_AR()
@@ -830,14 +847,16 @@ void Z80::OUTI()
 	// static_assert(false, "To implement");
 }
 
-void Z80::OUTR()
+bool Z80::OUTR()
 {
 	// static_assert(false, "To implement");
+	return false;
 }
 
-void Z80::OTIR()
+bool Z80::OTIR()
 {
 	// static_assert(false, "To implement");
+	return false;
 }
 
 void Z80::POP(Register& reg)
@@ -876,12 +895,18 @@ void Z80::RET()
 	m_program_counter = lo + (hi << 8);
 }
 
-void Z80::RET(bool cond)
+bool Z80::RET(bool cond)
 {
 	if (cond)
+	{
 		RET();
+		return true;
+	}
 	else
+	{
 		++m_program_counter;
+		return false;
+	}
 }
 
 void Z80::RETI()

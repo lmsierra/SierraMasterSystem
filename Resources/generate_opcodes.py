@@ -25,6 +25,25 @@ opcode_timings = [
                     5,10,10, 4,10,11, 7,11, 5, 6,10, 4,10, 0, 7,11
                  ]
 
+opcode_timing_branched = [
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    12, 0, 0, 0, 0, 0, 0, 0,12, 0, 0, 0, 0, 0, 0, 0,
+                    12, 0, 0, 0, 0, 0, 0, 0,12, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    11, 0, 0, 0,17, 0, 0, 0, 6, 0, 0, 0,17, 0, 0, 0,
+                    11, 0, 0, 0,17, 0, 0, 0, 6, 0, 0, 0,17, 0, 0, 0,
+                    11, 0, 0, 0,17, 0, 0, 0, 6, 0, 0, 0,17, 0, 0, 0,
+                    11, 0, 0, 0,17, 0, 0, 0, 6, 0, 0, 0,17, 0, 0, 0
+                 ]
+
 opcode_timings_cb = [
                     8, 8, 8, 8, 8, 8,15, 8, 8, 8, 8, 8, 8, 8,15, 8,
                     8, 8, 8, 8, 8, 8,15, 8, 8, 8, 8, 8, 8, 8,15, 8,
@@ -46,22 +65,41 @@ opcode_timings_cb = [
 
 
 opcode_timings_ed = [
-                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                    12,12,15,20, 8,14, 8, 9,12,12,15,20, 8,14, 8, 9,
-                    12,12,15,20, 8,14, 8, 9,12,12,15,20, 8,14, 8, 9,
-                    12,12,15,20, 8,14, 8,18,12,12,15,20, 8,14, 8,18,
-                    12,12,15,20, 8,14, 8, 8,12,12,15,20, 8,14, 8, 8,
-                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                    16,16,16,16, 8, 8, 8, 8,16,16,16,16, 8, 8, 8, 8,
-                    16,16,16,16, 8, 8, 8, 8,16,16,16,16, 8, 8, 8, 8,
-                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    12,12,15,20, 8,14, 8, 9,12,12,15,20, 0,14, 0, 9,
+                    12,12,15,20, 0, 0, 8, 9,12,12,15,20, 0, 0, 8, 9,
+                    12,12,15,20, 0, 0, 0,18,12,12,15,20, 0, 0, 0,18,
+                     0, 0,15,20, 0, 0, 0, 0,12,12,15,20, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    16,16,16,16, 0, 0, 0, 0,16,16,16,16, 0, 0, 0, 0,
+                    16,16,16,16, 0, 0, 0, 0,16,16,16,16, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                 ]
+
+opcode_timings_ed_branched = [
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    21,21,21,21, 0, 0, 0, 0,21,21,21,21, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                  ]
 
 replacements = {
@@ -109,8 +147,8 @@ def create_header():
     with open('../Z80Instructions/Z80Instructions.h', 'w+') as file:
         text = init_comment
         text += '#pragma once\n\n#include <stdint.h>\n#include "Z80.h"\n\nnamespace Z80Instructions\n{\n'
-        text += create_opcodes_functions('op_codes.txt', 'opcodes', opcode_timings)      
-        text += '\tinline uint8_t UnexpectedOPCode(Z80& cpu)\n\t{\n\t\tcpu.UNUSED();\n\t\treturn 4;\n\t}\n\n'  
+        text += create_opcodes_functions('op_codes.txt', 'opcodes', opcode_timings, None, opcode_timing_branched)      
+        text += '\tinline uint8_t UnexpectedOPCode(Z80& cpu)\n\t{\n\t\tcpu.UNUSED();\n\t\treturn 0;\n\t}\n\n'  
         text += '\tOPCodeFunc s_opcode_funcs [256] = \n\t{\n'
         for i in  range(256):
             text += '\t\t&opcodes0x%s%s\n' % (format(i, '02x'), ',' if i < 255 else '')            
@@ -141,7 +179,7 @@ def create_ed_headers():
     with open('../Z80Instructions/Z80EDInstructions.h', 'w+') as file:
         text = init_comment
         text += '#pragma once\n\n#include <stdint.h>\n#include "Z80Instructions/Z80Instructions.h"\n#include "Z80.h"\n\nnamespace Z80Instructions\n{\n'
-        text += create_opcodes_functions('op_codes_ed.txt', 'opcodesED', opcode_timings_ed, store_set)
+        text += create_opcodes_functions('op_codes_ed.txt', 'opcodesED', opcode_timings_ed, store_set, opcode_timings_ed_branched)
         text += '\tOPCodeFunc s_opcode_ed_funcs [256] = \n\t{\n'
         for i in range(256):
             if i in store_set:
@@ -152,7 +190,7 @@ def create_ed_headers():
         text += '}\n'
         file.write(text)
 
-def create_opcodes_functions(src, func_prefix, time_table, stored_set = None):
+def create_opcodes_functions(src, func_prefix, time_table, stored_set = None, time_table_branched = None):
     content = ''
 
     with open(src, 'r') as file:
@@ -165,21 +203,26 @@ def create_opcodes_functions(src, func_prefix, time_table, stored_set = None):
                 continue
 
             line_split = line.split()
+            num        = int(line_split[0], 16)
 
             content += '\tinline uint8_t %s%s(Z80& cpu)\n\t{\n' % (func_prefix, line_split[0])
-            content += '\t\tcpu.%s(' % line_split[1]
+
+            call_line = 'cpu.%s(' % line_split[1]
             for index, word in enumerate(line_split[2:]):
                 if index > 0:
-                    content += ', '
+                    call_line += ', '
                 if word in replacements.keys():
-                    content += '%s' % replacements[word]
+                    call_line += '%s' % replacements[word]
                 else:
                     print('%s not found in replacement. OPCODE: %s' % (word, line_split[0]))
-                    content += '%s' % (word)
+                    call_line += '%s' % (word)
+            call_line += ')'
 
-            content += ');'
-            num = int(line_split[0], 16)
-            content += '\n\t\treturn %i;' % (time_table[num])
+            if time_table_branched and time_table_branched[num] != 0:
+                content += '\t\treturn %i ? %s : %i;' % (time_table_branched[num], call_line, time_table[num])
+            else:
+                content += '\t\t%s;' % call_line
+                content += '\n\t\treturn %i;' % (time_table[num])
             content += '\n\t};\n\n'
 
             if stored_set != None:

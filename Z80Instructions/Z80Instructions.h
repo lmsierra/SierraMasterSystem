@@ -107,8 +107,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0x10(Z80& cpu)
 	{
-		cpu.DJNZ();
-		return 8;
+		return 13 ? cpu.DJNZ() : 8;
 	};
 
 	inline uint8_t opcodes0x11(Z80& cpu)
@@ -203,8 +202,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0x20(Z80& cpu)
 	{
-		cpu.JR(!cpu.ReadFlag(FLAG::ZERO));
-		return 7;
+		return 12 ? cpu.JR(!cpu.ReadFlag(FLAG::ZERO)) : 7;
 	};
 
 	inline uint8_t opcodes0x21(Z80& cpu)
@@ -251,8 +249,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0x28(Z80& cpu)
 	{
-		cpu.JR(cpu.ReadFlag(FLAG::ZERO));
-		return 7;
+		return 12 ? cpu.JR(cpu.ReadFlag(FLAG::ZERO)) : 7;
 	};
 
 	inline uint8_t opcodes0x29(Z80& cpu)
@@ -299,8 +296,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0x30(Z80& cpu)
 	{
-		cpu.JR(!cpu.ReadFlag(FLAG::CARRY));
-		return 7;
+		return 12 ? cpu.JR(!cpu.ReadFlag(FLAG::CARRY)) : 7;
 	};
 
 	inline uint8_t opcodes0x31(Z80& cpu)
@@ -347,8 +343,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0x38(Z80& cpu)
 	{
-		cpu.JR(cpu.ReadFlag(FLAG::CARRY));
-		return 7;
+		return 12 ? cpu.JR(cpu.ReadFlag(FLAG::CARRY)) : 7;
 	};
 
 	inline uint8_t opcodes0x39(Z80& cpu)
@@ -1163,8 +1158,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xc0(Z80& cpu)
 	{
-		cpu.RET(!cpu.ReadFlag(FLAG::ZERO));
-		return 5;
+		return 11 ? cpu.RET(!cpu.ReadFlag(FLAG::ZERO)) : 5;
 	};
 
 	inline uint8_t opcodes0xc1(Z80& cpu)
@@ -1187,8 +1181,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xc4(Z80& cpu)
 	{
-		cpu.CALL(!cpu.ReadFlag(FLAG::ZERO));
-		return 10;
+		return 17 ? cpu.CALL(!cpu.ReadFlag(FLAG::ZERO)) : 10;
 	};
 
 	inline uint8_t opcodes0xc5(Z80& cpu)
@@ -1211,8 +1204,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xc8(Z80& cpu)
 	{
-		cpu.RET(cpu.ReadFlag(FLAG::ZERO));
-		return 5;
+		return 6 ? cpu.RET(cpu.ReadFlag(FLAG::ZERO)) : 5;
 	};
 
 	inline uint8_t opcodes0xc9(Z80& cpu)
@@ -1235,8 +1227,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xcc(Z80& cpu)
 	{
-		cpu.CALL(cpu.ReadFlag(FLAG::ZERO));
-		return 10;
+		return 17 ? cpu.CALL(cpu.ReadFlag(FLAG::ZERO)) : 10;
 	};
 
 	inline uint8_t opcodes0xcd(Z80& cpu)
@@ -1259,8 +1250,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xd0(Z80& cpu)
 	{
-		cpu.RET(!cpu.ReadFlag(FLAG::CARRY));
-		return 5;
+		return 11 ? cpu.RET(!cpu.ReadFlag(FLAG::CARRY)) : 5;
 	};
 
 	inline uint8_t opcodes0xd1(Z80& cpu)
@@ -1283,8 +1273,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xd4(Z80& cpu)
 	{
-		cpu.CALL(!cpu.ReadFlag(FLAG::CARRY));
-		return 10;
+		return 17 ? cpu.CALL(!cpu.ReadFlag(FLAG::CARRY)) : 10;
 	};
 
 	inline uint8_t opcodes0xd5(Z80& cpu)
@@ -1307,8 +1296,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xd8(Z80& cpu)
 	{
-		cpu.RET(cpu.ReadFlag(FLAG::CARRY));
-		return 5;
+		return 6 ? cpu.RET(cpu.ReadFlag(FLAG::CARRY)) : 5;
 	};
 
 	inline uint8_t opcodes0xd9(Z80& cpu)
@@ -1331,8 +1319,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xdc(Z80& cpu)
 	{
-		cpu.CALL(cpu.ReadFlag(FLAG::CARRY));
-		return 10;
+		return 17 ? cpu.CALL(cpu.ReadFlag(FLAG::CARRY)) : 10;
 	};
 
 	inline uint8_t opcodes0xdd(Z80& cpu)
@@ -1355,8 +1342,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xe0(Z80& cpu)
 	{
-		cpu.RET(!cpu.ReadFlag(FLAG::PARITY_OVERFLOW));
-		return 5;
+		return 11 ? cpu.RET(!cpu.ReadFlag(FLAG::PARITY_OVERFLOW)) : 5;
 	};
 
 	inline uint8_t opcodes0xe1(Z80& cpu)
@@ -1379,8 +1365,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xe4(Z80& cpu)
 	{
-		cpu.CALL(!cpu.ReadFlag(FLAG::PARITY_OVERFLOW));
-		return 10;
+		return 17 ? cpu.CALL(!cpu.ReadFlag(FLAG::PARITY_OVERFLOW)) : 10;
 	};
 
 	inline uint8_t opcodes0xe5(Z80& cpu)
@@ -1403,8 +1388,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xe8(Z80& cpu)
 	{
-		cpu.RET(cpu.ReadFlag(FLAG::PARITY_OVERFLOW));
-		return 5;
+		return 6 ? cpu.RET(cpu.ReadFlag(FLAG::PARITY_OVERFLOW)) : 5;
 	};
 
 	inline uint8_t opcodes0xe9(Z80& cpu)
@@ -1427,8 +1411,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xec(Z80& cpu)
 	{
-		cpu.CALL(cpu.ReadFlag(FLAG::PARITY_OVERFLOW));
-		return 10;
+		return 17 ? cpu.CALL(cpu.ReadFlag(FLAG::PARITY_OVERFLOW)) : 10;
 	};
 
 	inline uint8_t opcodes0xed(Z80& cpu)
@@ -1451,8 +1434,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xf0(Z80& cpu)
 	{
-		cpu.RET(!cpu.ReadFlag(FLAG::SIGN));
-		return 5;
+		return 11 ? cpu.RET(!cpu.ReadFlag(FLAG::SIGN)) : 5;
 	};
 
 	inline uint8_t opcodes0xf1(Z80& cpu)
@@ -1475,8 +1457,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xf4(Z80& cpu)
 	{
-		cpu.CALL(!cpu.ReadFlag(FLAG::SIGN));
-		return 10;
+		return 17 ? cpu.CALL(!cpu.ReadFlag(FLAG::SIGN)) : 10;
 	};
 
 	inline uint8_t opcodes0xf5(Z80& cpu)
@@ -1499,8 +1480,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xf8(Z80& cpu)
 	{
-		cpu.RET(cpu.ReadFlag(FLAG::SIGN));
-		return 5;
+		return 6 ? cpu.RET(cpu.ReadFlag(FLAG::SIGN)) : 5;
 	};
 
 	inline uint8_t opcodes0xf9(Z80& cpu)
@@ -1523,8 +1503,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xfc(Z80& cpu)
 	{
-		cpu.CALL(cpu.ReadFlag(FLAG::SIGN));
-		return 10;
+		return 17 ? cpu.CALL(cpu.ReadFlag(FLAG::SIGN)) : 10;
 	};
 
 	inline uint8_t opcodes0xfd(Z80& cpu)
@@ -1548,7 +1527,7 @@ namespace Z80Instructions
 	inline uint8_t UnexpectedOPCode(Z80& cpu)
 	{
 		cpu.UNUSED();
-		return 4;
+		return 0;
 	}
 
 	OPCodeFunc s_opcode_funcs [256] = 
