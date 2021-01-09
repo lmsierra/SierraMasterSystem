@@ -2,6 +2,7 @@
 
 class Z80;
 class GameRom;
+class VDP;
 class SMS
 {
 public:
@@ -13,6 +14,7 @@ public:
 	bool LoadGame(const char* path);
 
 private:
-	Z80* m_cpu;
+	Z80*     m_cpu;
 	GameRom* m_game_rom;
+	VDP*     m_vdp;
 };

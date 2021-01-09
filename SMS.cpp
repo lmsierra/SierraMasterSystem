@@ -1,15 +1,19 @@
 #include "SMS.h"
 #include "Z80.h"
 #include "GameRom.h"
+#include "VDP.h"
 
-SMS::SMS() : m_cpu (new Z80()), m_game_rom (nullptr)
+SMS::SMS()
 {
-	m_cpu = new Z80();
+	m_cpu      = new Z80();
+	m_vdp      = new VDP(m_cpu);
+	m_game_rom = nullptr;
 }
 
 SMS::~SMS()
 {
 	delete m_cpu;
+	delete m_vdp;
 	delete m_game_rom;
 }
 
