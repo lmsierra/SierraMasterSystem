@@ -5,15 +5,24 @@
 class Z80;
 class VDP
 {
+	enum class LINE_MODE : uint8_t
+	{
+		DEFAULT  = 192,
+	    MODE_224 = 224,
+		MODE_240 = 240
+	};
+
 public:
 	VDP(Z80* cpu);
 	~VDP();
 
-	byte ReadRam      (word address);
-	void WriteRam     (word address, byte data);
-	void WriteAddress (byte data);
+	void Tick		  (uint32_t cycles);
+	void SetPal       (bool is_pal);
 
 private:
+	void WriteData    (byte data);
+	void WriteAddress (byte data);
+
 	word GetAddressRegister() const;
 
 	/*
@@ -30,17 +39,18 @@ private:
 	*/
 	byte GetCodeRegister() const;
 
+	LINE_MODE GetLineMode() const;
 	void IncrementAddressRegister();
 
 private:
-	Z80*  m_cpu;
-	byte* m_VRam;
-	byte* m_CRam;
-	byte* m_registers;
+	Z80*      m_cpu;
+	byte*     m_VRam;
+	byte*     m_CRam;
+	byte*     m_registers;
 
 	/* 14 bits: address. 2 MSB: code regiter */
-	word m_command_word;
-	bool m_is_first_byte;
+	word      m_command_word;
+	bool      m_is_first_byte;
 
 	/*
 		BIT 7   = Frame Interrupt Pending
@@ -48,9 +58,10 @@ private:
 		BIT 5   = Sprite Collision
 		BIT 4-0 = Unused
 	*/
-	byte m_status_flags;
+	byte      m_status_flags;
 
-	byte m_read_buffer;
-
+	byte      m_read_buffer;
+	LINE_MODE m_line_mode;
+	bool      m_pal;
 };
 

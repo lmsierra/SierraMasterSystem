@@ -22,6 +22,7 @@ void SMS::Tick()
 	if (m_game_rom && m_game_rom->IsValid())
 	{
 		uint32_t cycles = m_cpu->Tick();
+		m_vdp->Tick(cycles);
 	}
 }
 

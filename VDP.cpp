@@ -10,7 +10,9 @@ VDP::VDP(Z80* cpu) :
 	m_command_word  (0x0000),
 	m_is_first_byte (false),
 	m_status_flags  (0x00),
-	m_read_buffer   (0x00)
+	m_read_buffer   (0x00),
+	m_line_mode     (LINE_MODE::DEFAULT),
+	m_pal           (true)
 {
 	m_VRam      = (byte*)calloc(0x4000, sizeof(byte));
 	m_CRam      = (byte*)calloc(32,     sizeof(byte));
@@ -33,16 +35,35 @@ VDP::~VDP()
 	free(m_registers);
 }
 
-byte VDP::ReadRam(word address)
+void VDP::Tick(uint32_t cycles)
 {
-	assert(address >= 0x00 && address < 0x4000 && "Address out of bounds");
-	return m_VRam[address];
+	const uint8_t height_lines = static_cast<uint8_t>(m_line_mode);
+
 }
 
-void VDP::WriteRam(word address, byte data)
+void VDP::SetPal(bool is_pal)
 {
-	assert(address >= 0x00 && address < 0x4000 && "Address out of bounds");
-	m_VRam[address] = data;
+	m_pal = is_pal;
+}
+
+void VDP::WriteData(byte data)
+{
+	m_is_first_byte = true;
+	m_read_buffer   = data;
+
+	switch (GetCodeRegister())
+	{
+	case 0: // DROP
+	case 1: // DROP
+	case 2:
+		m_VRam[GetAddressRegister()] = data;
+		break;
+	case 3:
+		m_CRam[GetAddressRegister() & 0x1f] = data;
+		break;
+	default:
+		break;
+	}
 }
 
 void VDP::WriteAddress(byte data)
@@ -71,7 +92,10 @@ void VDP::WriteAddress(byte data)
 			assert(reg < 11 && "Register must have a value between 0 and 10");
 
 			m_registers[reg] = GetAddressRegister() && 0x00ff;
-
+			if (reg < 2)
+			{
+				m_line_mode = GetLineMode();
+			}
 			break;
 		}
 		default: break;
@@ -87,6 +111,16 @@ word VDP::GetAddressRegister() const
 byte VDP::GetCodeRegister() const
 {
 	return m_command_word >> 14;
+}
+
+VDP::LINE_MODE VDP::GetLineMode() const
+{
+	if ((m_registers[0] & 0x06) == 0x06 && (m_registers[1] & 0x10) == 0x10)
+		return LINE_MODE::MODE_224;
+	else if ((m_registers[0] & 0x06) == 0x06 && (m_registers[1] & 0x4) == 0x4)
+		return LINE_MODE::MODE_240;
+	else
+		return LINE_MODE::DEFAULT;
 }
 
 void VDP::IncrementAddressRegister()
