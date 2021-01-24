@@ -2,21 +2,38 @@
 #include <assert.h>
 #include <iostream>
 
-const uint32_t RES_W = 256;
-const uint32_t RES_H = 192;
+constexpr uint32_t    MAX_WIDTH    = 256;
+constexpr uint32_t    MAX_HEIGHT   = 192;
+
+constexpr VLineFormat NTSC_256x192   = VLineFormat(192, 24, 3, 3, 13, 27);
+constexpr VLineFormat NTSC_256x224   = VLineFormat(224,  8, 3, 3, 13, 11);
+constexpr VLineFormat PAL_256x192    = VLineFormat(192, 48, 3, 3, 13, 54);
+constexpr VLineFormat PAL_256x224    = VLineFormat(224, 32, 3, 3, 13, 38);
+constexpr VLineFormat PAL_256x240    = VLineFormat(240, 24, 3, 3, 13, 30);
+
+constexpr SystemInfo  NTSCSystemInfo = SystemInfo(262, 60);
+constexpr SystemInfo  PALSystemInfo  = SystemInfo(313, 50);
 
 VDP::VDP(Z80* cpu) :
-	m_cpu           (cpu),
-	m_command_word  (0x0000),
-	m_is_first_byte (false),
-	m_status_flags  (0x00),
-	m_read_buffer   (0x00),
-	m_line_mode     (LINE_MODE::DEFAULT),
-	m_pal           (true)
+	m_cpu            (cpu),
+	m_command_word   (0x0000),
+	m_is_first_byte  (false),
+	m_status_flags   (0x00),
+	m_read_buffer    (0x00),
+	m_line_mode      (LINE_MODE::DEFAULT),
+	m_pal            (true),
+	m_h_counter      (0),
+	m_v_counter      (0),
+	m_cycle_count	 (0),
+	m_line_format	 (VLineFormat()),
+	m_format_dirt    (true),
+	m_current_line   (0),
+	m_system_info    (SystemInfo())
 {
-	m_VRam      = (byte*)calloc(0x4000, sizeof(byte));
-	m_CRam      = (byte*)calloc(32,     sizeof(byte));
-	m_registers = (byte*)calloc(16,     sizeof(byte));
+	m_VRam      = (byte*)calloc(0x4000,                 sizeof(byte));
+	m_CRam      = (byte*)calloc(32,                     sizeof(byte));
+	m_registers = (byte*)calloc(16,                     sizeof(byte));
+	m_buffer    = (byte*)calloc(MAX_WIDTH * MAX_HEIGHT, sizeof(byte));
 
 	/* https://segaretro.org/Sega_Master_System_VDP_documentation_(2002-11-12) */
 	m_registers[0]  = 0b00110110;
@@ -37,13 +54,20 @@ VDP::~VDP()
 
 void VDP::Tick(uint32_t cycles)
 {
-	const uint8_t height_lines = static_cast<uint8_t>(m_line_mode);
+	const uint8_t       height_lines = static_cast<uint8_t>(m_line_mode);
+	const VLineFormat& line_format = GetCurrentLineFormat();
+
+	m_cycle_count += cycles;
+	
 
 }
 
+
 void VDP::SetPal(bool is_pal)
 {
-	m_pal = is_pal;
+	m_pal         = is_pal;
+	m_system_info = m_pal ? PALSystemInfo : NTSCSystemInfo;
+	m_format_dirt = true;
 }
 
 void VDP::WriteData(byte data)
@@ -94,7 +118,8 @@ void VDP::WriteAddress(byte data)
 			m_registers[reg] = GetAddressRegister() && 0x00ff;
 			if (reg < 2)
 			{
-				m_line_mode = GetLineMode();
+				m_line_mode      = GetLineMode();
+				m_format_dirt = true;
 			}
 			break;
 		}
@@ -129,4 +154,41 @@ void VDP::IncrementAddressRegister()
 		++m_command_word;
 	else
 		m_command_word = 0xC000;
+}
+
+const VLineFormat& VDP::GetCurrentLineFormat()
+{
+	if (m_format_dirt)
+	{
+		m_line_format    = FindLineFormat();
+		m_format_dirt = false;
+	}
+
+	return m_line_format;
+}
+
+VLineFormat VDP::FindLineFormat() const
+{
+	if (m_pal)
+	{
+		switch (m_line_mode)
+		{
+		case LINE_MODE::DEFAULT:  return PAL_256x192;
+		case LINE_MODE::MODE_224: return PAL_256x224;
+		case LINE_MODE::MODE_240: return PAL_256x240;
+		default: assert(false && "Unknown format.");
+		}
+	}
+	else
+	{
+		switch (m_line_mode)
+		{
+		case LINE_MODE::DEFAULT:  return NTSC_256x192;
+		case LINE_MODE::MODE_224: return NTSC_256x224;
+		case LINE_MODE::MODE_240: assert(false && "240 line mode not supported for NTSC"); break;
+		default: assert(false && "Unknown format.");
+		}
+	}
+
+	return VLineFormat();
 }
