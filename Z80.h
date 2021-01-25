@@ -60,7 +60,7 @@ public:
 
 private:
 
-	void ProcessOPCode(byte opcode, OPCodeFunc[256]);
+	uint32_t ProcessOPCode(byte opcode, OPCodeFunc[256]);
 	void IncrementRefresh();
 
 	void WriteFlag(FLAG flag, bool value);

@@ -39,22 +39,6 @@ struct VLineFormat
 	uint8_t top_border;
 };
 
-struct SystemInfo
-{
-	SystemInfo() : lines_per_frame(0), fps(0) {}
-
-	constexpr SystemInfo(uint32_t _lines_per_frame, uint32_t _fps) :
-		lines_per_frame(_lines_per_frame), fps(_fps)
-	{
-
-	}
-
-	uint32_t lines_per_frame;
-	uint32_t fps;
-	// https://www.smspower.org/forums/13530-VDPClockSpeed
-	uint32_t cycles_per_line = 228;
-};
-
 class Z80;
 class VDP
 {
@@ -69,7 +53,7 @@ public:
 	VDP(Z80* cpu);
 	~VDP();
 
-	void               Tick		                (uint32_t cycles);
+	bool               Tick		                (uint32_t cycles);
 	void               SetPal                   (bool is_pal);
 
 private:
@@ -122,5 +106,4 @@ private:
 	VLineFormat m_line_format;
 	bool	    m_format_dirt;
 	uint16_t    m_current_line;
-	SystemInfo  m_system_info;
 };

@@ -44,19 +44,19 @@ uint32_t Z80::Tick()
 	m_cycle_count = 0;
 
 	byte opcode = ReadByte();
-	ProcessOPCode(opcode, Z80Instructions::s_opcode_funcs);
+	m_cycle_count += ProcessOPCode(opcode, Z80Instructions::s_opcode_funcs);
 	
 	std::cout << "Running OPCode: " << std::hex << static_cast<int>(opcode) << "\n";
 	return m_cycle_count;
 }
 
-void Z80::ProcessOPCode(byte opcode, OPCodeFunc funcs [256])
+uint32_t Z80::ProcessOPCode(byte opcode, OPCodeFunc funcs [256])
 {
 	assert(funcs != nullptr && "Array of functions passed cannot be null");
 	
 	IncrementRefresh();
 
-	m_cycle_count += funcs[opcode](*this);
+	return funcs[opcode](*this);
 }
 
 void Z80::IncrementRefresh()

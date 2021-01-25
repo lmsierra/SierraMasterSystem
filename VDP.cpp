@@ -11,9 +11,6 @@ constexpr VLineFormat PAL_256x192    = VLineFormat(192, 48, 3, 3, 13, 54);
 constexpr VLineFormat PAL_256x224    = VLineFormat(224, 32, 3, 3, 13, 38);
 constexpr VLineFormat PAL_256x240    = VLineFormat(240, 24, 3, 3, 13, 30);
 
-constexpr SystemInfo  NTSCSystemInfo = SystemInfo(262, 60);
-constexpr SystemInfo  PALSystemInfo  = SystemInfo(313, 50);
-
 VDP::VDP(Z80* cpu) :
 	m_cpu            (cpu),
 	m_command_word   (0x0000),
@@ -27,14 +24,12 @@ VDP::VDP(Z80* cpu) :
 	m_cycle_count	 (0),
 	m_line_format	 (VLineFormat()),
 	m_format_dirt    (true),
-	m_current_line   (0),
-	m_system_info    (SystemInfo())
+	m_current_line   (0)
 {
-	m_VRam      = (byte*)calloc(0x4000,                 sizeof(byte));
-	m_CRam      = (byte*)calloc(32,                     sizeof(byte));
-	m_registers = (byte*)calloc(16,                     sizeof(byte));
-	m_buffer    = (byte*)calloc(MAX_WIDTH * MAX_HEIGHT, sizeof(byte));
-
+	m_VRam          = (byte*)calloc(0x4000,                 sizeof(byte));
+	m_CRam          = (byte*)calloc(32,                     sizeof(byte));
+	m_registers     = (byte*)calloc(16,                     sizeof(byte));
+	m_buffer        = (byte*)calloc(MAX_WIDTH * MAX_HEIGHT, sizeof(byte));
 	/* https://segaretro.org/Sega_Master_System_VDP_documentation_(2002-11-12) */
 	m_registers[0]  = 0b00110110;
 	m_registers[1]  = 0b10000000;
@@ -52,21 +47,27 @@ VDP::~VDP()
 	free(m_registers);
 }
 
-void VDP::Tick(uint32_t cycles)
+bool VDP::Tick(uint32_t cycles)
 {
-	const uint8_t       height_lines = static_cast<uint8_t>(m_line_mode);
-	const VLineFormat& line_format = GetCurrentLineFormat();
-
+	const uint8_t      height_lines = static_cast<uint8_t>(m_line_mode);
+	const VLineFormat& line_format  = GetCurrentLineFormat();
+	
+	bool vblank = false;
+	
 	m_cycle_count += cycles;
 	
+	// Scan line and that stuff.
 
+
+	// m_cycle_count -= m_system_info.cycles_per_line;
+
+	return vblank;
 }
 
 
 void VDP::SetPal(bool is_pal)
 {
 	m_pal         = is_pal;
-	m_system_info = m_pal ? PALSystemInfo : NTSCSystemInfo;
 	m_format_dirt = true;
 }
 
