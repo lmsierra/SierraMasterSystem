@@ -12,19 +12,20 @@ constexpr VLineFormat PAL_256x224    = VLineFormat(224, 32, 3, 3, 13, 38);
 constexpr VLineFormat PAL_256x240    = VLineFormat(240, 24, 3, 3, 13, 30);
 
 VDP::VDP(Z80* cpu) :
-	m_cpu            (cpu),
-	m_command_word   (0x0000),
-	m_is_first_byte  (false),
-	m_status_flags   (0x00),
-	m_read_buffer    (0x00),
-	m_line_mode      (LINE_MODE::DEFAULT),
-	m_pal            (true),
-	m_h_counter      (0),
-	m_v_counter      (0),
-	m_cycle_count	 (0),
-	m_line_format	 (VLineFormat()),
-	m_format_dirt    (true),
-	m_current_line   (0)
+	m_cpu             (cpu),
+	m_command_word    (0x0000),
+	m_is_first_byte   (false),
+	m_status_flags    (0x00),
+	m_read_buffer     (0x00),
+	m_line_mode       (LINE_MODE::DEFAULT),
+	m_pal             (true),
+	m_h_counter       (0),
+	m_v_counter       (0),
+	m_cycle_count	  (0),
+	m_line_format	  (VLineFormat()),
+	m_format_dirt     (true),
+	m_current_line    (0),
+	m_display_enabled (false)
 {
 	m_VRam          = (byte*)calloc(0x4000,                 sizeof(byte));
 	m_CRam          = (byte*)calloc(32,                     sizeof(byte));
@@ -57,7 +58,6 @@ bool VDP::Tick(uint32_t cycles)
 	m_cycle_count += cycles;
 	
 	// Scan line and that stuff.
-
 
 	// m_cycle_count -= m_system_info.cycles_per_line;
 
@@ -161,7 +161,7 @@ const VLineFormat& VDP::GetCurrentLineFormat()
 {
 	if (m_format_dirt)
 	{
-		m_line_format    = FindLineFormat();
+		m_line_format = FindLineFormat();
 		m_format_dirt = false;
 	}
 
@@ -192,4 +192,51 @@ VLineFormat VDP::FindLineFormat() const
 	}
 
 	return VLineFormat();
+}
+
+bool VDP::IsDisplayEnabled() const
+{
+	return m_display_enabled;
+}
+
+byte VDP::GetVCounter() const
+{
+	if (m_pal)
+	{
+		switch (m_line_mode)
+		{
+		case LINE_MODE::DEFAULT:  return m_v_counter > 0xF2 ? m_v_counter - (0xF2 - 0xBA + 1) : m_v_counter;
+		case LINE_MODE::MODE_224: 
+			
+			if ((m_v_counter - 0xFF) > 0x02)
+			{
+				return m_v_counter - (0xFF - 0xCA + 1);
+			}
+			else if (m_v_counter > 0xFF) // 0x00-0x02
+			{
+				return m_v_counter - (0xFF + 1);
+			}
+		case LINE_MODE::MODE_240: 
+
+			if ((m_v_counter - 0xFF) > 0x0A) // 
+			{
+				return m_v_counter - (0xFF - 0xD2 + 1);
+			}
+			else if (m_v_counter > 0xFF) // 0x00-0x0A
+			{
+				return m_v_counter - (0xFF + 1);
+			}
+		}
+	}
+	else
+	{
+		switch (m_line_mode)
+		{
+		case LINE_MODE::DEFAULT:  return m_v_counter > 0xDA ? m_v_counter - (0xDA - 0xD5 + 1) : m_v_counter;
+		case LINE_MODE::MODE_224: return m_v_counter > 0xEA ? m_v_counter - (0xEA - 0xE5 + 1) : m_v_counter;
+		case LINE_MODE::MODE_240: assert(false && "LINE_MODE::MODE_240 - Unsupported mode for NTSC"); //Drop
+		}
+	}
+
+	return static_cast<uint8_t>(m_v_counter);
 }

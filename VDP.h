@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Types.h"
+#include "ColorPalette.h"
 
 struct VLineFormat
 {
@@ -76,6 +77,8 @@ private:
 	LINE_MODE          GetLineMode              () const;
 	void               IncrementAddressRegister ();
 	const VLineFormat& GetCurrentLineFormat     ();
+	bool			   IsDisplayEnabled         () const;
+	byte			   GetVCounter              () const;
 
 private:
 	VLineFormat FindLineFormat () const;
@@ -106,4 +109,5 @@ private:
 	VLineFormat m_line_format;
 	bool	    m_format_dirt;
 	uint16_t    m_current_line;
+	bool        m_display_enabled;
 };
