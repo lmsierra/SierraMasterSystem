@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Types.h"
-#include "ColorPalette.h"
 
 struct VLineFormat
 {
