@@ -30,13 +30,17 @@ VDP::VDP(Z80& cpu) :
 	m_buffer        = (byte*)calloc(MAX_WIDTH * MAX_HEIGHT, sizeof(byte));
 
 	/* https://segaretro.org/Sega_Master_System_VDP_documentation_(2002-11-12) */
-	m_registers[0]  = 0b00110110;
-	m_registers[1]  = 0b10000000;
-	m_registers[2]  = 0b11111111;
-	m_registers[3]  = 0b00000111;
-	m_registers[4]  = 0b11111111;
-	m_registers[5]  = 0b11111111;
-	m_registers[10] = 0b11111111;
+	m_registers[0]  = 0b00110110; // Mode Control No. 1
+	m_registers[1]  = 0b10000000; // Mode Control No. 2
+	m_registers[2]  = 0b11111111; // Name Table Base Address
+	m_registers[3]  = 0b00000111; // Color Table Base Address
+	m_registers[4]  = 0b00000111; // Background Pattern Generator Base Address
+	m_registers[5]  = 0b11111111; // Sprite Attribute Table Base Address
+	m_registers[6]  = 0b11111111; // Sprite Pattern Generator Base Address
+	m_registers[7]  = 0b11111111; // Overscan/Backdrop Color
+	m_registers[8]  = 0b11111111; // Background X Scroll
+	m_registers[9]  = 0b11111111; // Background Y Scroll
+	m_registers[10] = 0b11111111; // Line counter
 }
 
 VDP::~VDP()
@@ -227,11 +231,6 @@ VLineFormat VDP::FindLineFormat() const
 	return VLineFormat();
 }
 
-bool VDP::IsDisplayEnabled() const
-{
-	return m_display_enabled;
-}
-
 byte VDP::GetVCounter() const
 {
 	if (m_pal)
@@ -275,7 +274,12 @@ byte VDP::GetVCounter() const
 	return static_cast<uint8_t>(m_v_counter);
 }
 
-SCREEN_MODE VDP::GetVDPMode() const
+bool VDP::IsDisplayVisible() const
+{
+	return m_registers[1] && (1 << 5);
+}
+
+SCREEN_MODE VDP::GetScreenMode() const
 {
 	SCREEN_MODE result = SCREEN_MODE::GRAPHIC_I;
 	
@@ -297,3 +301,55 @@ SCREEN_MODE VDP::GetVDPMode() const
 	return result;
 }
 
+bool VDP::IsVerticalScrollActive() const
+{
+	return !(m_registers[0] ^ (1 << 7));
+}
+
+bool VDP::IsHorizontalScrollActive() const
+{
+	return !(m_registers[0] & (1 << 6));
+}
+
+bool VDP::ShouldUseOverscanColor() const
+{
+	return m_registers[0] & (1 << 5);
+}
+
+bool VDP::IsLineInterruptEnabled() const
+{
+	return m_registers[0] & (1 << 4);
+}
+
+bool VDP::ShouldShiftSprites() const
+{
+	return m_registers[0] & (1 << 3);
+}
+
+bool VDP::IsMonochromeDisplay() const
+{
+	return m_registers[0] & 1;
+}
+
+bool VDP::IsFrameInterruptEnabled() const
+{
+	return m_registers[1] & (1 << 6);
+}
+
+bool VDP::AreSpritesDoubleSized() const
+{
+	return m_registers[1] & 1;
+}
+
+SPRITE_SIZE VDP::GetSpriteSize() const
+{
+	const bool sprite_flag = m_registers[1] & (1 << 1);
+	if (GetScreenMode() == SCREEN_MODE::MODE_4)
+	{
+		return sprite_flag ? SPRITE_SIZE::SIZE_8x16 : SPRITE_SIZE::SIZE_8x8;
+	}
+	else
+	{
+		return sprite_flag ? SPRITE_SIZE::SIZE_16x16 : SPRITE_SIZE::SIZE_8x8;
+	}
+}

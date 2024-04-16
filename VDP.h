@@ -53,6 +53,14 @@ enum class SCREEN_MODE : uint8_t
 	INVALID_TEXT = 9  // repeated in different byte modes
 };
 
+enum class SPRITE_SIZE : uint8_t
+{
+	SIZE_8x8 = 0,
+	SIZE_16x16,
+	SIZE_8x16,
+
+};
+
 class Z80;
 class VDP
 {
@@ -97,12 +105,25 @@ private:
 	LINE_MODE          GetLineMode              () const;
 	void               IncrementAddressRegister ();
 	const VLineFormat& GetCurrentLineFormat     ();
-	bool			   IsDisplayEnabled         () const;
 	byte			   GetVCounter              () const;
-	SCREEN_MODE        GetVDPMode				() const;
 
 private:
 	VLineFormat FindLineFormat () const;
+
+	// Register getter functions
+private:
+	bool			   IsDisplayVisible         () const;
+	SCREEN_MODE        GetScreenMode            () const;
+	bool			   IsVerticalScrollActive   () const;
+	bool			   IsHorizontalScrollActive () const;
+	bool			   ShouldUseOverscanColor   () const;
+	bool			   IsLineInterruptEnabled   () const;
+	bool			   ShouldShiftSprites       () const;
+	bool			   IsMonochromeDisplay      () const;
+	bool			   IsFrameInterruptEnabled  () const;
+	bool			   AreSpritesDoubleSized    () const;
+	SPRITE_SIZE        GetSpriteSize            () const;
+
 
 private:
 	Z80&        m_cpu;
