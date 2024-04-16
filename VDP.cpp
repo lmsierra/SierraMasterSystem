@@ -238,9 +238,10 @@ byte VDP::GetVCounter() const
 	{
 		switch (m_line_mode)
 		{
-		case LINE_MODE::DEFAULT:  return m_v_counter > 0xF2 ? m_v_counter - (0xF2 - 0xBA + 1) : m_v_counter;
-		case LINE_MODE::MODE_224: 
-			
+		case LINE_MODE::DEFAULT: 
+			return m_v_counter > 0xF2 ? m_v_counter - (0xF2 - 0xBA + 1) : m_v_counter;
+		
+		case LINE_MODE::MODE_224: 	
 			if ((m_v_counter - 0xFF) > 0x02)
 			{
 				return m_v_counter - (0xFF - 0xCA + 1);
@@ -249,8 +250,8 @@ byte VDP::GetVCounter() const
 			{
 				return m_v_counter - (0xFF + 1);
 			}
-		case LINE_MODE::MODE_240: 
 
+		case LINE_MODE::MODE_240: 
 			if ((m_v_counter - 0xFF) > 0x0A) // 
 			{
 				return m_v_counter - (0xFF - 0xD2 + 1);
@@ -273,3 +274,26 @@ byte VDP::GetVCounter() const
 
 	return static_cast<uint8_t>(m_v_counter);
 }
+
+VDP_MODE VDP::GetVDPMode() const
+{
+	VDP_MODE result = VDP_MODE::GRAPHIC_I;
+	
+	const byte m1 = m_registers[1] & (1 << 4);
+	const byte m2 = m_registers[0] & (1 << 1);
+	const byte m3 = m_registers[1] & (1 << 3);
+	const byte m4 = m_registers[0] & (1 << 2);
+
+	if (m4)
+	{
+		result = m1 ? VDP_MODE::INVALID_TEXT : VDP_MODE::MODE_4;
+	}
+	else
+	{
+		const byte mode_byte = m3 | m2 | m1;
+		result = static_cast<VDP_MODE>(mode_byte);
+	}
+
+	return result;
+}
+

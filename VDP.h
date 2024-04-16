@@ -39,6 +39,20 @@ struct VLineFormat
 	uint8_t top_border;
 };
 
+enum class VDP_MODE : uint8_t
+{
+	GRAPHIC_I    = 0,
+	TEXT         = 1,
+	GRAPHIC_II   = 2,
+	MODE_1_2     = 3,
+	MULTICOLOR   = 4,
+	MODE_1_3     = 5,
+	MODE_2_3     = 6,
+	MODE_1_2_3   = 7,
+	MODE_4       = 8, // repeated in different byte modes
+	INVALID_TEXT = 9  // repeated in different byte modes
+};
+
 class Z80;
 class VDP
 {
@@ -85,6 +99,7 @@ private:
 	const VLineFormat& GetCurrentLineFormat     ();
 	bool			   IsDisplayEnabled         () const;
 	byte			   GetVCounter              () const;
+	VDP_MODE           GetVDPMode				() const;
 
 private:
 	VLineFormat FindLineFormat () const;
