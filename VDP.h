@@ -50,11 +50,18 @@ class VDP
 	};
 
 public:
-	VDP(Z80* cpu);
+	static const uint32_t MAX_WIDTH = 256;
+	static const uint32_t MAX_HEIGHT = 192;
+
+public:
+	VDP() = delete;
+	VDP(Z80& cpu);
 	~VDP();
 
 	bool               Tick		                (uint32_t cycles);
 	void               SetPal                   (bool is_pal);
+
+	inline const byte* const GetFrameBuffer() const { return m_buffer; }
 
 private:
 	void               WriteData                (byte data);
@@ -82,9 +89,8 @@ private:
 private:
 	VLineFormat FindLineFormat () const;
 
-
 private:
-	Z80*        m_cpu;
+	Z80&        m_cpu;
 	byte*       m_VRam;
 	byte*       m_CRam;
 	byte*       m_registers;
@@ -109,4 +115,5 @@ private:
 	bool	    m_format_dirt;
 	uint16_t    m_current_line;
 	bool        m_display_enabled;
+	uint32_t    m_reg_10_counter;
 };

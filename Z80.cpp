@@ -46,7 +46,7 @@ uint32_t Z80::Tick()
 	byte opcode = ReadByte();
 	m_cycle_count += ProcessOPCode(opcode, Z80Instructions::s_opcode_funcs);
 	
-	std::cout << "Running OPCode: " << std::hex << static_cast<int>(opcode) << "\n";
+	// std::cout << "Running OPCode: " << std::hex << static_cast<int>(opcode) << "\n";
 	return m_cycle_count;
 }
 

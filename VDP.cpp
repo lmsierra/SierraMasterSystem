@@ -2,16 +2,13 @@
 #include <assert.h>
 #include <iostream>
 
-constexpr uint32_t    MAX_WIDTH    = 256;
-constexpr uint32_t    MAX_HEIGHT   = 192;
-
 constexpr VLineFormat NTSC_256x192   = VLineFormat(192, 24, 3, 3, 13, 27);
 constexpr VLineFormat NTSC_256x224   = VLineFormat(224,  8, 3, 3, 13, 11);
 constexpr VLineFormat PAL_256x192    = VLineFormat(192, 48, 3, 3, 13, 54);
 constexpr VLineFormat PAL_256x224    = VLineFormat(224, 32, 3, 3, 13, 38);
 constexpr VLineFormat PAL_256x240    = VLineFormat(240, 24, 3, 3, 13, 30);
 
-VDP::VDP(Z80* cpu) :
+VDP::VDP(Z80& cpu) :
 	m_cpu             (cpu),
 	m_command_word    (0x0000),
 	m_is_first_byte   (false),
@@ -31,6 +28,7 @@ VDP::VDP(Z80* cpu) :
 	m_CRam          = (byte*)calloc(32,                     sizeof(byte));
 	m_registers     = (byte*)calloc(16,                     sizeof(byte));
 	m_buffer        = (byte*)calloc(MAX_WIDTH * MAX_HEIGHT, sizeof(byte));
+
 	/* https://segaretro.org/Sega_Master_System_VDP_documentation_(2002-11-12) */
 	m_registers[0]  = 0b00110110;
 	m_registers[1]  = 0b10000000;
@@ -55,9 +53,43 @@ bool VDP::Tick(uint32_t cycles)
 	
 	bool vblank = false;
 	
+	// Max cycles reached
 	m_cycle_count += cycles;
-	
+	if (m_cycle_count > 228)
+		return false;
+
+	// display is disabled
+	m_display_enabled = m_registers[1] & (1 << 5);	
+	if (!m_display_enabled)
+		return false;
+
 	// Scan line and that stuff.
+	const uint16_t display_begin = line_format.top_blanking + line_format.vertical_blanking + line_format.top_border;
+	const uint16_t display_end   = display_begin + line_format.active_display;
+	const uint16_t line          = m_current_line - display_begin;
+
+	if (line < display_end)
+	{
+		if (line == 0)
+		{
+			m_reg_10_counter = m_registers[10];
+
+			if (m_registers[0] & (1<<3))
+			{
+				// Request Interrupt (on CPU)
+			
+			}
+		}
+		else
+		{
+			--m_reg_10_counter;
+		}
+	}
+	else if (line - line_format.active_display == 1 && m_registers[1] & (1<<4))
+	{
+		// Request Interrupt 2
+		
+	}
 
 	// m_cycle_count -= m_system_info.cycles_per_line;
 
@@ -119,12 +151,13 @@ void VDP::WriteAddress(byte data)
 			m_registers[reg] = GetAddressRegister() && 0x00ff;
 			if (reg < 2)
 			{
-				m_line_mode      = GetLineMode();
+				m_line_mode   = GetLineMode();
 				m_format_dirt = true;
 			}
 			break;
 		}
-		default: break;
+		default: 
+			break;
 		}
 	}
 }
