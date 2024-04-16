@@ -39,7 +39,7 @@ struct VLineFormat
 	uint8_t top_border;
 };
 
-enum class VDP_MODE : uint8_t
+enum class SCREEN_MODE : uint8_t
 {
 	GRAPHIC_I    = 0,
 	TEXT         = 1,
@@ -99,7 +99,7 @@ private:
 	const VLineFormat& GetCurrentLineFormat     ();
 	bool			   IsDisplayEnabled         () const;
 	byte			   GetVCounter              () const;
-	VDP_MODE           GetVDPMode				() const;
+	SCREEN_MODE        GetVDPMode				() const;
 
 private:
 	VLineFormat FindLineFormat () const;

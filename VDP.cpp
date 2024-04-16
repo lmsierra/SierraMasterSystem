@@ -275,9 +275,9 @@ byte VDP::GetVCounter() const
 	return static_cast<uint8_t>(m_v_counter);
 }
 
-VDP_MODE VDP::GetVDPMode() const
+SCREEN_MODE VDP::GetVDPMode() const
 {
-	VDP_MODE result = VDP_MODE::GRAPHIC_I;
+	SCREEN_MODE result = SCREEN_MODE::GRAPHIC_I;
 	
 	const byte m1 = m_registers[1] & (1 << 4);
 	const byte m2 = m_registers[0] & (1 << 1);
@@ -286,12 +286,12 @@ VDP_MODE VDP::GetVDPMode() const
 
 	if (m4)
 	{
-		result = m1 ? VDP_MODE::INVALID_TEXT : VDP_MODE::MODE_4;
+		result = m1 ? SCREEN_MODE::INVALID_TEXT : SCREEN_MODE::MODE_4;
 	}
 	else
 	{
 		const byte mode_byte = m3 | m2 | m1;
-		result = static_cast<VDP_MODE>(mode_byte);
+		result = static_cast<SCREEN_MODE>(mode_byte);
 	}
 
 	return result;
