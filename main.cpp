@@ -6,10 +6,10 @@
 
 int main()
 {
-	SMS sms;
-	sms.Launch("Roms/Taz-Mania.sms");
-	// sms.LoadGame("Roms/Taz-Mania.sms");
-	
+    SMS sms;
+    sms.Launch("Roms/Taz-Mania.sms");
+    // sms.LoadGame("Roms/Taz-Mania.sms");
+    
 
-	return 0;
+    return 0;
 }

@@ -13,7 +13,7 @@ byte ROMOnlyMM::ReadMemory(word address)
 {
     assert(address >= 0x0000 && address < 0x10000 && "Trying to write memory out of bounds");
 
-	return m_internal_memory[address];
+    return m_internal_memory[address];
 }
 
 void ROMOnlyMM::WriteMemory(word address, byte data)
