@@ -8,27 +8,26 @@ constexpr VLineFormat PAL_256x192    = VLineFormat(192, 48, 3, 3, 13, 54);
 constexpr VLineFormat PAL_256x224    = VLineFormat(224, 32, 3, 3, 13, 38);
 constexpr VLineFormat PAL_256x240    = VLineFormat(240, 24, 3, 3, 13, 30);
 
-constexpr uint8_t VIDEO_MAX_CYCLES = 228;
-
 VDP::VDP(Z80& cpu) :
-    m_cpu             (cpu),
-    m_command_word    (0x0000),
-    m_is_first_byte   (false),
-    m_status_flags    (0x00),
-    m_read_buffer     (0x00),
-    m_line_mode       (LINE_MODE::DEFAULT),
-    m_pal             (true),
-    m_h_counter       (0),
-    m_v_counter       (0),
-    m_cycle_count	  (0),
-    m_line_format	  (VLineFormat()),
-    m_format_dirt     (true),
-    m_current_line    (0)
+    m_cpu               (cpu),
+    m_command_word      (0x0000),
+    m_is_first_byte     (false),
+    m_status_flags      (0x00),
+    m_read_buffer       (0x00),
+    m_line_mode         (LINE_MODE::DEFAULT),
+    m_pal               (true),
+    m_h_counter         (0),
+    m_v_counter         (0),
+    m_cycle_count	    (0),
+    m_line_format	    (VLineFormat()),
+    m_format_dirt       (true),
+    m_current_line      (0),
+    m_request_interrupt (false)
 {
     m_VRam          = (byte*)calloc(0x4000,                 sizeof(byte));
     m_CRam          = (byte*)calloc(32,                     sizeof(byte));
     m_registers     = (byte*)calloc(16,                     sizeof(byte));
-    m_buffer        = (byte*)calloc(MAX_WIDTH * MAX_HEIGHT, sizeof(byte));
+    m_buffer        = (byte*)calloc(MAX_WIDTH * MAX_HEIGHT * 3, sizeof(byte));
 
     /* https://segaretro.org/Sega_Master_System_VDP_documentation_(2002-11-12) */
     m_registers[0]  = 0b00110110; // Mode Control No. 1
@@ -53,6 +52,8 @@ VDP::~VDP()
 
 bool VDP::Tick(uint32_t cycles)
 {
+    m_request_interrupt = IsInterruptRequested();
+
     const uint8_t      height_lines = static_cast<uint8_t>(m_line_mode);
     const VLineFormat& line_format  = GetCurrentLineFormat();
     
@@ -60,17 +61,13 @@ bool VDP::Tick(uint32_t cycles)
     
     // Max cycles reached
     m_cycle_count += cycles;
-    if (m_cycle_count > VIDEO_MAX_CYCLES)
-        return false;
+    
+    const bool ReadNextLine = ((m_h_counter + m_cycle_count) > m_cycles_per_line);
+    
+    m_h_counter = (m_h_counter + m_cycle_count) % (3 + 1);
 
-    if (IsDisplayVisible())
-    {
 
-    }
-    else
-    {
-
-    }
+    /*
 
     // Scan line and that stuff.
     const uint16_t display_begin = line_format.top_blanking + line_format.vertical_blanking + line_format.top_border;
@@ -99,6 +96,16 @@ bool VDP::Tick(uint32_t cycles)
     }
 
     // m_cycle_count -= m_system_info.cycles_per_line;
+    */
+
+    /*
+    for (uint32_t i = 0; i < MAX_WIDTH * MAX_HEIGHT * 3; i = i+3)
+    {
+        m_buffer[i] = 0;
+        m_buffer[i + 1] = 0;
+        m_buffer[i + 2] = 255;
+    }
+    */
 
     return vblank;
 }
@@ -365,4 +372,9 @@ void VDP::SetSpriteCollision()
 void VDP::SetSpriteOverflow()
 {
     m_status_flags |= (1 << 5);
+}
+
+bool VDP::IsInterruptRequested() const
+{
+    return m_status_flags & (1 << 6) && m_registers[1] & (1 << 4);
 }

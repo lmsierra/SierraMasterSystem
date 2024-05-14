@@ -83,7 +83,9 @@ public:
     bool               Tick		                (uint32_t cycles);
     void               SetPal                   (bool is_pal);
 
-    inline const byte* const GetFrameBuffer() const { return m_buffer; }
+public:
+    inline const byte* const GetFrameBuffer     () const { return m_buffer; }
+    inline void              SetVideoSystemInfo(uint32_t lines_per_frame, uint32_t cycles_per_line) { m_lines_per_frame = lines_per_frame; m_cycles_per_line = cycles_per_line; }
 
 private:
     void               WriteData                (byte data);
@@ -108,6 +110,7 @@ private:
     byte			   GetVCounter              () const;
     void		       SetSpriteCollision		();
     void               SetSpriteOverflow        ();
+    bool               IsInterruptRequested     () const;
 
 private:
     VLineFormat FindLineFormat () const;
@@ -152,4 +155,8 @@ private:
     bool        m_format_dirt;
     uint16_t    m_current_line;
     bool        m_request_interrupt;
+
+private:
+    uint32_t m_lines_per_frame;
+    uint32_t m_cycles_per_line;
 };
