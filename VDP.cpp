@@ -8,6 +8,15 @@ constexpr VLineFormat PAL_256x192    = VLineFormat(192, 48, 3, 3, 13, 54);
 constexpr VLineFormat PAL_256x224    = VLineFormat(224, 32, 3, 3, 13, 38);
 constexpr VLineFormat PAL_256x240    = VLineFormat(240, 24, 3, 3, 13, 30);
 
+// Two palettes can be used. Both contains 16 colors and stored in the VRAM (separated by 16)
+constexpr uint8_t SECONDARY_COLOR_PALETTE_OFFSET = 16;
+
+// RGB 
+constexpr uint32_t NUM_COLOR_COMPONENTS = 3;
+
+// Width * height * 3 color components
+constexpr uint32_t FRAME_BUFFER_SIZE = VDP::MAX_WIDTH * VDP::MAX_HEIGHT * NUM_COLOR_COMPONENTS;
+
 VDP::VDP(Z80& cpu) :
     m_cpu               (cpu),
     m_command_word      (0x0000),
@@ -24,10 +33,10 @@ VDP::VDP(Z80& cpu) :
     m_current_line      (0),
     m_request_interrupt (false)
 {
-    m_VRam          = (byte*)calloc(0x4000,                 sizeof(byte));
-    m_CRam          = (byte*)calloc(32,                     sizeof(byte));
-    m_registers     = (byte*)calloc(16,                     sizeof(byte));
-    m_buffer        = (byte*)calloc(MAX_WIDTH * MAX_HEIGHT * 3, sizeof(byte));
+    m_VRam          = (byte*)calloc(0x4000,            sizeof(byte));
+    m_CRam          = (byte*)calloc(32,                sizeof(byte));
+    m_registers     = (byte*)calloc(16,                sizeof(byte));
+    m_frame_buffer  = (byte*)calloc(FRAME_BUFFER_SIZE, sizeof(byte));
 
     /* https://segaretro.org/Sega_Master_System_VDP_documentation_(2002-11-12) */
     m_registers[0]  = 0b00110110; // Mode Control No. 1
@@ -61,11 +70,28 @@ bool VDP::Tick(uint32_t cycles)
     
     // Max cycles reached
     m_cycle_count += cycles;
-    
-    const bool ReadNextLine = ((m_h_counter + m_cycle_count) > m_cycles_per_line);
-    
-    m_h_counter = (m_h_counter + m_cycle_count) % (3 + 1);
+   
+    // @TODO: is this right?
+    // Using 342 cycles as indicated in documentation for h counter
+    // As it runs as X2 the Z80, use 342*2 = 684 instead
+   
+    // const bool ReadNextLine = ((m_h_counter + m_cycle_count) > m_cycles_per_line);
+    const bool read_next_line = ((m_h_counter + m_cycle_count) > 684);
 
+    m_h_counter = (m_h_counter + cycles) % (684 + 1);
+
+    // vertical
+
+    if (read_next_line)
+    {
+
+        ScanLine(m_current_line);
+
+        // Update line
+        m_current_line = (m_current_line + 1) % m_lines_per_frame;
+
+        vblank = m_current_line == GetCurrentLineFormat().active_display;
+    }
 
     /*
 
@@ -98,16 +124,159 @@ bool VDP::Tick(uint32_t cycles)
     // m_cycle_count -= m_system_info.cycles_per_line;
     */
 
-    /*
-    for (uint32_t i = 0; i < MAX_WIDTH * MAX_HEIGHT * 3; i = i+3)
-    {
-        m_buffer[i] = 0;
-        m_buffer[i + 1] = 0;
-        m_buffer[i + 2] = 255;
-    }
-    */
 
     return vblank;
+}
+
+void VDP::ScanLine(uint32_t line)
+{
+    const VLineFormat line_format = GetCurrentLineFormat();
+
+    const uint16_t display_begin = line_format.top_blanking + line_format.vertical_blanking + line_format.top_border;
+    const uint16_t display_end = display_begin + line_format.active_display;
+
+    if (IsDisplayVisible())
+    {
+        // ClearScreen(line);
+        RenderBackground(line);
+    }
+    else
+    {
+        if (line < GetCurrentLineFormat().active_display)
+        {
+            ClearScreen(line);
+        }
+    }
+}
+
+void VDP::ClearScreen(uint32_t line)
+{
+    const uint32_t line_start = line * VDP::MAX_WIDTH * 3;
+
+    for (uint32_t i = 0; i < VDP::MAX_WIDTH ; ++i)
+    {
+        m_frame_buffer[line_start + i * 3]     = 255;
+        m_frame_buffer[line_start + i * 3 + 1] = 0;
+        m_frame_buffer[line_start + i * 3 + 2] = 255;
+    }
+}
+
+void VDP::RenderBackground(uint32_t line)
+{
+    // Only render on valid display
+    if (line > GetCurrentLineFormat().active_display)
+    {
+        return;
+    }
+
+    // get the pixel at which the line starts
+    const uint32_t starting_line_pixel = line * VDP::MAX_WIDTH;
+
+    const uint16_t table_name = GetBackgroundTableName();
+
+    // Horizontal scroll
+    // If bit #6 of VDP register $00 is set, horizontal scrolling will be fixed at zero for scanlines zero through 15
+    const bool is_horizontal_scrolling = line <= 15 && !IsHorizontalScrollActive();
+    // Whole shorizontal scroll
+    const byte scroll_x = is_horizontal_scrolling ? m_registers[8] : 0;
+
+    // Vertical scroll
+    const byte scroll_y = m_registers[9];
+    
+    const byte mod = IsBckgTableNameExtended() ? 255 : 224;
+    uint32_t tile_y = line + scroll_y % mod;
+    
+    byte starting_row = scroll_y & 0b11111000;
+    byte fine_scroll_y = scroll_y & 0b00000111;
+
+    const bool use_overscan_color = ShouldUseOverscanColor();
+
+    uint8_t pixel_color = 0;
+
+    // iterate each pixel horizontally
+    for (uint32_t position_x = 0; position_x < VDP::MAX_WIDTH; ++position_x)
+    {
+        // pixel in screen we have to draw
+        const uint32_t screen_pixel_index = starting_line_pixel + position_x;
+
+        if (use_overscan_color && position_x < 8)
+        {
+            pixel_color = GetOverscanColor();
+            pixel_color += SECONDARY_COLOR_PALETTE_OFFSET; // Use second color palette
+        }
+        else
+        {
+            // If bit 7 of register $00 is set, the vertical scroll value will be fixed to zero when columns 24 to 31 are rendered. 
+            constexpr uint8_t MIN_INDEX_FOR_V_SCROLL = 24 * 8; // (24 * 8 = 192)
+
+            const bool is_vertical_scrolling_disabled = position_x >= MIN_INDEX_FOR_V_SCROLL && IsVerticalScrollActive();
+            if (is_vertical_scrolling_disabled)
+            {
+                starting_row = line;
+                fine_scroll_y = 0;
+            }
+
+            const byte table_start_x = position_x - scroll_x;
+            // Which is the first tile to process
+            const byte starting_column = table_start_x & 0b11111000;
+            // Which pixel starts the tile.
+            const byte fine_scroll_x = table_start_x & 0b00000111;
+
+            uint32_t tile_address = table_name;
+            tile_address += starting_row * 64;   //each scanline has 32 tiles (1 tile per column) but 1 tile is 2 bytes in memory
+            tile_address += starting_column * 2; // each tile is two bytes in memory
+
+            uint16_t tile_data = m_VRam[tile_address + 1] << 8;
+            tile_data += m_VRam[tile_address];
+
+            // ---pcvhnnnnnnnnn
+            const bool has_priority = tile_data & (1 << 12);
+            const bool use_secondary_palette = tile_data & (1 << 11);
+            const bool vertical_flip = tile_data & (1 << 10);
+            const bool horizontal_flip = tile_data & (1 << 9);
+            uint16_t pattern_index = tile_data & 0x1FF;
+
+            const byte offset = (vertical_flip ? 7 - fine_scroll_y : fine_scroll_y) << 2;
+            pattern_index = pattern_index * 64;
+            pattern_index += offset * 4;
+
+            // each pattern is composed by 4 bitplanes
+            byte data_1 = m_VRam[pattern_index];
+            byte data_2 = m_VRam[pattern_index + 1];
+            byte data_3 = m_VRam[pattern_index + 2];
+            byte data_4 = m_VRam[pattern_index + 3];
+
+            const byte bit_index = horizontal_flip ? 7 - fine_scroll_x : fine_scroll_x;
+
+            pixel_color = (data_1 & (1 << bit_index)) & 0x01;
+            pixel_color += ((data_2 & (1 << bit_index)) & 0x01) << 1;
+            pixel_color += ((data_3 & (1 << bit_index)) & 0x01) << 2;
+            pixel_color += ((data_4 & (1 << bit_index)) & 0x01) << 3;
+
+
+            if (use_secondary_palette)
+            {
+                pixel_color += SECONDARY_COLOR_PALETTE_OFFSET;
+            }
+
+            // @TODO: add depth buffer for priority?? 
+
+        }
+
+        const byte color = m_CRam[pixel_color];
+        const RGBColor rgb_color = RGBColor::GetFromSMSColor(color);
+
+        WriteToFramBuffer(line, position_x, rgb_color);
+    }
+}
+
+void VDP::WriteToFramBuffer(uint32_t line, uint32_t pixel_in_line, RGBColor color)
+{
+    const uint32_t starting_index = line * VDP::MAX_WIDTH * NUM_COLOR_COMPONENTS + pixel_in_line * NUM_COLOR_COMPONENTS;
+
+    m_frame_buffer[starting_index] = color.R;
+    m_frame_buffer[starting_index + 1] = color.G;
+    m_frame_buffer[starting_index + 2] = color.B;
 }
 
 
@@ -313,7 +482,7 @@ SCREEN_MODE VDP::GetScreenMode() const
 
 bool VDP::IsVerticalScrollActive() const
 {
-    return !(m_registers[0] ^ (1 << 7));
+    return !(m_registers[0] & (1 << 7));
 }
 
 bool VDP::IsHorizontalScrollActive() const
@@ -366,15 +535,49 @@ SPRITE_SIZE VDP::GetSpriteSize() const
 
 void VDP::SetSpriteCollision()
 {
-    m_status_flags |= (1 << 4);
+    m_status_flags |= (1 << 5);
 }
 
 void VDP::SetSpriteOverflow()
 {
-    m_status_flags |= (1 << 5);
+    m_status_flags |= (1 << 6);
 }
 
 bool VDP::IsInterruptRequested() const
 {
-    return m_status_flags & (1 << 6) && m_registers[1] & (1 << 4);
+    return m_status_flags & (1 << 7) && m_registers[1] & (1 << 5);
+}
+
+bool VDP::IsBckgTableNameExtended() const
+{
+    return m_line_mode == LINE_MODE::MODE_224 || m_line_mode == LINE_MODE::MODE_240;
+}
+
+uint16_t VDP::GetBackgroundTableName() const
+{
+    const bool name_table_extended = IsBckgTableNameExtended();
+
+    // MODE_224 and MODE_240 uses uses specific values based on the bits 2 and 3
+    if (name_table_extended)
+    {
+        const byte value = (m_registers[2] & 0x0C) >> 2;
+
+        switch (value)
+        {
+        case 0: return 0x0700;
+        case 1: return 0x1700;
+        case 2: return 0x2700;
+        case 3: return 0x3700;            
+        }
+    }
+    else
+    {
+        const uint16_t map_address = (m_registers[2] & (name_table_extended ? 0x0C : 0x0E)) << 10;
+        return map_address;
+    }
+}
+
+byte VDP::GetOverscanColor() const
+{
+    return m_registers[7] & 0x0F;
 }

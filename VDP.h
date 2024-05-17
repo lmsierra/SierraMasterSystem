@@ -72,8 +72,8 @@ class VDP
     };
 
 public:
-    static const uint32_t MAX_WIDTH = 256;
-    static const uint32_t MAX_HEIGHT = 192;
+    static constexpr uint32_t MAX_WIDTH = 256;
+    static constexpr uint32_t MAX_HEIGHT = 192;
 
 public:
     VDP() = delete;
@@ -84,7 +84,7 @@ public:
     void               SetPal                   (bool is_pal);
 
 public:
-    inline const byte* const GetFrameBuffer     () const { return m_buffer; }
+    inline const byte* const GetFrameBuffer     () const { return m_frame_buffer; }
     inline void              SetVideoSystemInfo(uint32_t lines_per_frame, uint32_t cycles_per_line) { m_lines_per_frame = lines_per_frame; m_cycles_per_line = cycles_per_line; }
 
 private:
@@ -113,6 +113,12 @@ private:
     bool               IsInterruptRequested     () const;
 
 private:
+    void               ScanLine                 (uint32_t line);
+    void               ClearScreen              (uint32_t line);
+    void               RenderBackground         (uint32_t line);
+    void               WriteToFramBuffer        (uint32_t line, uint32_t pixel_in_line, RGBColor);
+
+private:
     VLineFormat FindLineFormat () const;
 
     // Register getter functions
@@ -128,13 +134,16 @@ private:
     bool			   IsFrameInterruptEnabled  () const;
     bool			   AreSpritesDoubleSized    () const;
     SPRITE_SIZE        GetSpriteSize            () const;
+    bool               IsBckgTableNameExtended  () const;
+    uint16_t           GetBackgroundTableName   () const;
+    byte               GetOverscanColor         () const;
 
 private:
     Z80&        m_cpu;
     byte*       m_VRam;
     byte*       m_CRam;
     byte*       m_registers;
-    byte*       m_buffer;
+    byte*       m_frame_buffer;
     /* 14 bits: address. 2 MSB: code regiter */
     word        m_command_word;
     bool        m_is_first_byte;
@@ -155,6 +164,9 @@ private:
     bool        m_format_dirt;
     uint16_t    m_current_line;
     bool        m_request_interrupt;
+
+private:
+    uint8_t m_scroll_y;
 
 private:
     uint32_t m_lines_per_frame;
