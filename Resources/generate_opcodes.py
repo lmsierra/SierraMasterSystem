@@ -138,7 +138,8 @@ replacements = {
     'pe'    : 'cpu.ReadFlag(FLAG::PARITY_OVERFLOW)',
     'po'    : '!cpu.ReadFlag(FLAG::PARITY_OVERFLOW)',
     'C'     : 'cpu.ReadFlag(FLAG::CARRY)',
-    'nc'    : '!cpu.ReadFlag(FLAG::CARRY)'
+    'nc'    : '!cpu.ReadFlag(FLAG::CARRY)',
+    '(c)'   : ''
 }
 
 
@@ -208,14 +209,27 @@ def create_opcodes_functions(src, func_prefix, time_table, stored_set = None, ti
             content += '\tinline uint8_t %s%s(Z80& cpu)\n\t{\n' % (func_prefix, line_split[0])
 
             call_line = 'cpu.%s(' % line_split[1]
+
+            previous_found = False
             for index, word in enumerate(line_split[2:]):
-                if index > 0:
-                    call_line += ', '
+                replacement = ''
+
                 if word in replacements.keys():
-                    call_line += '%s' % replacements[word]
+
+                    replacement = replacements[word]
+
                 else:
                     print('%s not found in replacement. OPCODE: %s' % (word, line_split[0]))
                     call_line += '%s' % (word)
+                    
+                previous_found = len(replacement) > 0
+
+                if replacement:
+                    if index > 0:
+                        if previous_found:
+                            call_line += ', '
+                    call_line += '%s' % (replacement)
+
             call_line += ')'
 
             if time_table_branched and time_table_branched[num] != 0:
@@ -236,6 +250,8 @@ def main():
     create_header()
     create_cb_headers()
     create_ed_headers()
+
+    input()
 
 if __name__ == "__main__": 
 	main() 

@@ -12,7 +12,7 @@ namespace Z80Instructions
 {
 	inline uint8_t opcodesED0x40(Z80& cpu)
 	{
-		cpu.IN(cpu.m_reg_BC.hi, cpu.m_reg_BC.lo);
+		cpu.IN(cpu.m_reg_BC.hi);
 		return 12;
 	};
 
@@ -60,7 +60,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0x48(Z80& cpu)
 	{
-		cpu.IN(cpu.m_reg_BC.lo, cpu.m_reg_BC.lo);
+		cpu.IN(cpu.m_reg_BC.lo);
 		return 12;
 	};
 
