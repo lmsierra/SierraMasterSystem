@@ -347,7 +347,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0xbb(Z80& cpu)
 	{
-		return 21 ? cpu.OUTR() : 16;
+		return 21 ? cpu.OTDR() : 16;
 	};
 
 	OPCodeFunc s_opcode_ed_funcs [256] = 
