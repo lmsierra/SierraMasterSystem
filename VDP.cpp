@@ -164,7 +164,7 @@ void VDP::ClearScreen(uint32_t line)
 void VDP::RenderBackground(uint32_t line)
 {
     // Only render on valid display
-    if (line > GetCurrentLineFormat().active_display)
+    if (line >= GetCurrentLineFormat().active_display)
     {
         return;
     }
@@ -186,7 +186,7 @@ void VDP::RenderBackground(uint32_t line)
     const byte mod = IsBckgTableNameExtended() ? 255 : 224;
     uint32_t tile_y = line + scroll_y % mod;
     
-    byte starting_row = scroll_y & 0b11111000;
+    byte starting_row = scroll_y >> 3;
     byte fine_scroll_y = scroll_y & 0b00000111;
 
     const bool use_overscan_color = ShouldUseOverscanColor();
@@ -218,7 +218,7 @@ void VDP::RenderBackground(uint32_t line)
 
             const byte table_start_x = position_x - scroll_x;
             // Which is the first tile to process
-            const byte starting_column = table_start_x & 0b11111000;
+            const byte starting_column = table_start_x >> 3;
             // Which pixel starts the tile.
             const byte fine_scroll_x = table_start_x & 0b00000111;
 
@@ -237,7 +237,7 @@ void VDP::RenderBackground(uint32_t line)
             uint16_t pattern_index = tile_data & 0x1FF;
 
             const byte offset = (vertical_flip ? 7 - fine_scroll_y : fine_scroll_y) << 2;
-            pattern_index = pattern_index * 64;
+            pattern_index = pattern_index << 5;
             pattern_index += offset * 4;
 
             // each pattern is composed by 4 bitplanes
@@ -567,7 +567,8 @@ uint16_t VDP::GetBackgroundTableName() const
         case 0: return 0x0700;
         case 1: return 0x1700;
         case 2: return 0x2700;
-        case 3: return 0x3700;            
+        case 3: return 0x3700;       
+        default: return 0x0700;
         }
     }
     else

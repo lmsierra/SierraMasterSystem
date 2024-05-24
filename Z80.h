@@ -143,7 +143,7 @@ public:
     void IM0();
     void IM1();
     void IM2();
-    void IN(byte& in, const byte reg);
+    void IN(byte& in);
     void IND();
     bool INDR();
     void INC(byte& reg);
@@ -178,7 +178,7 @@ public:
     void NOP();
     void OR(byte data);
     void OR_HL();
-    void OUT(const byte reg, byte& out);
+    void OUT(byte& out);
     void OUTD();
     void OUTI();
     bool OUTR();
