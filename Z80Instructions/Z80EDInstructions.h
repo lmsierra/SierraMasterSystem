@@ -18,7 +18,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0x41(Z80& cpu)
 	{
-		cpu.OUT(cpu.m_reg_BC.hi);
+		cpu.OUT(cpu.m_reg_BC.lo, cpu.m_reg_BC.hi);
 		return 12;
 	};
 
@@ -66,7 +66,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0x49(Z80& cpu)
 	{
-		cpu.OUT(cpu.m_reg_BC.lo);
+		cpu.OUT(cpu.m_reg_BC.lo, cpu.m_reg_BC.lo);
 		return 12;
 	};
 
@@ -96,13 +96,13 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0x50(Z80& cpu)
 	{
-		cpu.IN(cpu.m_reg_DE.hi);
+		cpu.IN(cpu.m_reg_DE.hi, cpu.m_reg_BC.lo);
 		return 12;
 	};
 
 	inline uint8_t opcodesED0x51(Z80& cpu)
 	{
-		cpu.OUT(cpu.m_reg_DE.hi);
+		cpu.OUT(cpu.m_reg_BC.lo, cpu.m_reg_DE.hi);
 		return 12;
 	};
 
@@ -132,13 +132,13 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0x58(Z80& cpu)
 	{
-		cpu.IN(cpu.m_reg_DE.lo);
+		cpu.IN(cpu.m_reg_DE.lo, cpu.m_reg_BC.lo);
 		return 12;
 	};
 
 	inline uint8_t opcodesED0x59(Z80& cpu)
 	{
-		cpu.OUT(cpu.m_reg_DE.lo);
+		cpu.OUT(cpu.m_reg_BC.lo, cpu.m_reg_DE.lo);
 		return 12;
 	};
 
@@ -168,13 +168,13 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0x60(Z80& cpu)
 	{
-		cpu.IN(cpu.m_reg_HL.hi);
+		cpu.IN(cpu.m_reg_HL.hi, cpu.m_reg_BC.lo);
 		return 12;
 	};
 
 	inline uint8_t opcodesED0x61(Z80& cpu)
 	{
-		cpu.OUT(cpu.m_reg_HL.hi);
+		cpu.OUT(cpu.m_reg_BC.lo, cpu.m_reg_HL.hi);
 		return 12;
 	};
 
@@ -198,13 +198,13 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0x68(Z80& cpu)
 	{
-		cpu.IN(cpu.m_reg_HL.lo);
+		cpu.IN(cpu.m_reg_HL.lo, cpu.m_reg_BC.lo);
 		return 12;
 	};
 
 	inline uint8_t opcodesED0x69(Z80& cpu)
 	{
-		cpu.OUT(cpu.m_reg_HL.lo);
+		cpu.OUT(cpu.m_reg_BC.lo, cpu.m_reg_HL.lo);
 		return 12;
 	};
 
@@ -240,13 +240,13 @@ namespace Z80Instructions
 
 	inline uint8_t opcodesED0x78(Z80& cpu)
 	{
-		cpu.IN(cpu.m_reg_AF.hi);
+		cpu.IN(cpu.m_reg_AF.hi, cpu.m_reg_BC.lo);
 		return 12;
 	};
 
 	inline uint8_t opcodesED0x79(Z80& cpu)
 	{
-		cpu.OUT(cpu.m_reg_AF.hi);
+		cpu.OUT(cpu.m_reg_BC.lo, cpu.m_reg_AF.hi);
 		return 12;
 	};
 

@@ -211,27 +211,24 @@ def create_opcodes_functions(src, func_prefix, time_table, stored_set = None, ti
             call_line = 'cpu.%s(' % line_split[1]
 
             previous_found = False
-
             for index, word in enumerate(line_split[2:]):
-                replacement = None
+                replacement = ''
 
-                is_word_numeric = type(word) == int
+                if word in replacements.keys():
 
-                if not is_word_numeric and word in replacements.keys():
                     replacement = replacements[word]
 
                 else:
-                    if not is_word_numeric:
-                        print('%s not found in replacement. OPCODE: %s' % (word, line_split[0]))
+                    print('%s not found in replacement. OPCODE: %s' % (word, line_split[0]))
                     call_line += '%s' % (word)
                     
+                previous_found = len(replacement) > 0
+
                 if replacement:
                     if index > 0:
                         if previous_found:
                             call_line += ', '
                     call_line += '%s' % (replacement)
-
-                previous_found = replacement == None or len(replacement) > 0
 
             call_line += ')'
 

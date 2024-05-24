@@ -541,7 +541,7 @@ void Z80::IM2()
     m_interrupt_mode = InterruptMode::MODE_2;
 }
 
-void Z80::IN(byte& in)
+void Z80::IN(byte& in, const byte reg)
 {
     // static_assert(false, "To implement");
 }
@@ -832,7 +832,7 @@ void Z80::OR_HL()
     OR(m_memory->ReadMemory(GetPrefixedHLAddress()));
 }
 
-void Z80::OUT(byte& out)
+void Z80::OUT(const byte reg, byte& out)
 {
     // static_assert(false, "To implement");
 }
