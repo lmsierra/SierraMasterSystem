@@ -1267,7 +1267,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xd3(Z80& cpu)
 	{
-		cpu.OUT(cpu.ReadByte(), cpu.m_reg_AF.hi);
+		cpu.OUT_N(cpu.m_reg_AF.hi);
 		return 11;
 	};
 
@@ -1313,7 +1313,7 @@ namespace Z80Instructions
 
 	inline uint8_t opcodes0xdb(Z80& cpu)
 	{
-		cpu.IN(cpu.m_reg_AF.hi, cpu.ReadByte());
+		cpu.IN_N(cpu.m_reg_AF.hi);
 		return 11;
 	};
 

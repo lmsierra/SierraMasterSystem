@@ -129,7 +129,7 @@ replacements = {
     '(hl)'  : 'cpu.GetPrefixedHLAddress()',
     '(hl*)' : 'cpu.m_reg_HL.value',
     'n'     : 'cpu.ReadByte()',
-    '(n)'   : 'cpu.ReadByte()',
+    '(n)'   : '',
     'sp'    : 'cpu.m_stack_pointer',
     'nz'    : '!cpu.ReadFlag(FLAG::ZERO)',
     'z'     : 'cpu.ReadFlag(FLAG::ZERO)',

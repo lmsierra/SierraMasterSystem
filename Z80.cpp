@@ -546,6 +546,11 @@ void Z80::IN(byte& in)
     // static_assert(false, "To implement");
 }
 
+void Z80::IN_N(byte& in)
+{
+    // static_assert(false, "To implement");
+}
+
 void Z80::IND()
 {
     // static_assert(false, "To implement");
@@ -833,6 +838,11 @@ void Z80::OR_HL()
 }
 
 void Z80::OUT(byte& out)
+{
+    // static_assert(false, "To implement");
+}
+
+void Z80::OUT_N(byte& out)
 {
     // static_assert(false, "To implement");
 }
