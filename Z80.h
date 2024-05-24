@@ -143,7 +143,7 @@ public:
     void IM0();
     void IM1();
     void IM2();
-    void IN(byte& in);
+    void IN_C(byte& in);
     void IN_N(byte& in);
     void IND();
     bool INDR();
@@ -179,7 +179,7 @@ public:
     void NOP();
     void OR(byte data);
     void OR_HL();
-    void OUT(byte& out);
+    void OUT_C(byte& out);
     void OUT_N(byte& out);
     void OUTD();
     void OUTI();
