@@ -91,17 +91,25 @@ public:
     inline void SetContext(const VDPContext& context) { m_context = context; }
 
 public:
-    bool               Tick		                (uint32_t cycles);
-    void               SetPal                   (bool is_pal);
+    bool                     Tick		                (uint32_t cycles);
+    void                     SetPal                   (bool is_pal);
 
 public:
+
     inline const byte* const GetFrameBuffer     () const { return m_frame_buffer; }
-    inline void              SetVideoSystemInfo(uint32_t lines_per_frame, uint32_t cycles_per_line) { m_lines_per_frame = lines_per_frame; m_cycles_per_line = cycles_per_line; }
+    inline void              SetVideoSystemInfo (uint32_t lines_per_frame, uint32_t cycles_per_line) { m_lines_per_frame = lines_per_frame; m_cycles_per_line = cycles_per_line; }
+
+public:
+    inline byte         ReadControlPort          () const { return GetStatusFlags(); }
+    inline byte         GetStatusFlags           () const { return m_status_flags; }
+    inline byte         GetHCounter              () const { return m_h_counter; }
+    byte			    GetVCounter              () const;
+    byte                ReadDataPort             ();
+    void                WriteDataPort            (byte data);
+    void                WriteControlPort         (byte data);
+    word                GetAddressRegister       () const;
 
 private:
-    void               WriteData                (byte data);
-    void               WriteAddress             (byte data);
-    word               GetAddressRegister       () const;
     /*
      Code value         Actions taken
 
@@ -118,7 +126,6 @@ private:
     LINE_MODE          GetLineMode              () const;
     void               IncrementAddressRegister ();
     const VLineFormat& GetCurrentLineFormat     ();
-    byte			   GetVCounter              () const;
     void		       SetSpriteCollision		();
     void               SetSpriteOverflow        ();
     bool               IsInterruptRequested     () const;

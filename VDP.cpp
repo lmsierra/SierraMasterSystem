@@ -285,7 +285,31 @@ void VDP::SetPal(bool is_pal)
     m_format_dirt = true;
 }
 
-void VDP::WriteData(byte data)
+byte VDP::ReadDataPort()
+{
+    m_is_first_byte = true;
+
+    byte data = m_read_buffer;
+
+    switch (GetCodeRegister())
+    {
+    case 0: 
+        m_read_buffer = m_VRam[GetAddressRegister()];
+        break;
+    case 1:
+        m_read_buffer = m_VRam[GetAddressRegister()];
+        break;
+    default: 
+        assert(false);
+        break;
+    }
+
+    IncrementAddressRegister();
+
+    return data;
+}
+
+void VDP::WriteDataPort(byte data)
 {
     m_is_first_byte = true;
     m_read_buffer   = data;
@@ -305,7 +329,7 @@ void VDP::WriteData(byte data)
     }
 }
 
-void VDP::WriteAddress(byte data)
+void VDP::WriteControlPort(byte data)
 {
     if (m_is_first_byte)
     {
