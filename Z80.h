@@ -28,6 +28,15 @@ enum FLAG : uint8_t
     SIGN            = 7  // 
 };
 
+class IODevice;
+struct Z80Context
+{
+    Z80Context() {}
+    Z80Context(IODevice* _io_device) : io_device(_io_device) {}
+
+    IODevice* io_device = nullptr;
+};
+
 class Z80;
 using OPCodeFunc = uint8_t(*)(Z80&);
 /*
@@ -47,62 +56,61 @@ public:
     Z80();
     ~Z80();
 
-    bool ReadFlag(FLAG flag);
-    word ReadWord();
-    byte ReadByte();
+public: // inline
+    inline void SetContext(const Z80Context& context) { m_context = context; }
 
-    word GetPrefixedHLAddress();
-    Register& GetPrefixedHL();
-
-    uint32_t Tick();
-
-    void LoadGame(GameRom& rom);
+public:
+    bool        ReadFlag(FLAG flag);
+    word        ReadWord();
+    byte        ReadByte();
+    word        GetPrefixedHLAddress();
+    Register&   GetPrefixedHL();
+    uint32_t    Tick();
+    void        LoadGame(GameRom& rom);
 
 private:
-
-    uint32_t ProcessOPCode(byte opcode, OPCodeFunc[256]);
-    void IncrementRefresh();
-
-    void WriteFlag(FLAG flag, bool value);
-
+    uint32_t    ProcessOPCode(byte opcode, OPCodeFunc[256]);
+    void        IncrementRefresh();
+    void        WriteFlag(FLAG flag, bool value);
 
 private:
     static bool HasParity(const byte data);
 
 public:
-    Register m_reg_AF; // A - Accumulator. F - Flags
-    Register m_reg_BC;
-    Register m_reg_DE;
-    Register m_reg_HL; // Address registers.
-
+    Register      m_reg_AF; // A - Accumulator. F - Flags
+    Register      m_reg_BC;
+    Register      m_reg_DE;
+    Register      m_reg_HL; // Address registers.
     // Shadow registers aren't modified. They should be swapped with the normal ones.
-    Register m_reg_AF_shadow;
-    Register m_reg_BC_shadow;
-    Register m_reg_DE_shadow;
-    Register m_reg_HL_shadow;
-
+    Register      m_reg_AF_shadow;
+    Register      m_reg_BC_shadow;
+    Register      m_reg_DE_shadow;
+    Register      m_reg_HL_shadow;
     // HL Prefixes: 
-    Register m_reg_IX;
-    Register m_reg_IY;
+    Register      m_reg_IX;
+    Register      m_reg_IY;
 
-    word m_program_counter; // points to next opcode
-    word m_stack_pointer; // next address to store variable in stack.
-    byte m_reg_refresh; // increments with each opcode.
-    byte m_reg_interrupt; //
+    word          m_program_counter; // points to next opcode
+    word          m_stack_pointer; // next address to store variable in stack.
+    byte          m_reg_refresh; // increments with each opcode.
+    byte          m_reg_interrupt; //
 
 private:
-    uint32_t m_cycle_count; // cycles that needs the opcode.
+    uint32_t      m_cycle_count; // cycles that needs the opcode.
 
-    Memory* m_memory;
+    Memory*       m_memory;
 
-    byte m_current_prefix;
-    bool m_halt;
+    byte          m_current_prefix;
+    bool          m_halt;
 
-    bool m_IFF1;
-    bool m_IFF2;
-    bool m_after_EI;
+    bool          m_IFF1;
+    bool          m_IFF2;
+    bool          m_after_EI;
 
     InterruptMode m_interrupt_mode;
+
+private:
+    Z80Context    m_context;
 
 // opcodes declaration.
 public:
@@ -183,7 +191,7 @@ public:
     void OUT_N(byte& out);
     void OUTD();
     void OUTI();
-    bool OUTR();
+    bool OTDR();
     bool OTIR();
     void POP(Register& reg);
     void PUSH(const Register reg);

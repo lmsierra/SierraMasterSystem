@@ -2,6 +2,9 @@
 #include "Z80.h"
 #include "GameRom.h"
 #include "VDP.h"
+#include "ExternalInterface/SDLInterface.h"
+#include "IODevice.h"
+
 #include "SDL.h"
 #include <assert.h>
 #include <chrono>
@@ -9,7 +12,6 @@
 
 #include <iostream>
 
-#include "ExternalInterface/SDLInterface.h"
 
 // https://segaretro.org/Sega_Master_System/Technical_specifications
 const SystemInfo NTSCSystemInfo = SystemInfo(53693175, 262, 59.922743f, 896040);
@@ -28,10 +30,15 @@ SystemInfo::SystemInfo(uint32_t _master_clock_cycles, uint32_t _lines_per_frame,
 SMS::SMS()
 {
     m_cpu			= new Z80();
-    m_vdp			= new VDP(*m_cpu);
+    m_vdp			= new VDP();
+    m_io_device     = new IODevice();
+    m_ext_interface = new SDLInterface();
     m_game_rom		= nullptr;
 
-    m_ext_interface = new SDLInterface();
+    // Init
+    m_cpu->SetContext(Z80Context(m_io_device));
+    m_vdp->SetContext(VDPContext(m_cpu));
+    m_io_device->SetContext(IODeviceContext(m_vdp));
 }
 
 SMS::~SMS()

@@ -23,6 +23,7 @@ class Z80;
 class GameRom;
 class VDP;
 class ExternalInterface;
+class IODevice;
 class SMS
 {
 public:
@@ -44,6 +45,7 @@ private:
     VDP*		       m_vdp;
     SystemInfo	       m_system_info;
     ExternalInterface* m_ext_interface;
+    IODevice*          m_io_device;
 
     double LastFrameTimestamp = 0.0;
 };

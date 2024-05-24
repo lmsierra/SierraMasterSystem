@@ -3,6 +3,8 @@
 #include "Z80Instructions/Z80Instructions.h"
 #include "Z80Instructions/Z80CBInstructions.h"
 #include "Z80Instructions/Z80EDInstructions.h"
+#include "IODevice.h"
+
 #include <assert.h>
 
 #include <iostream>
@@ -543,23 +545,54 @@ void Z80::IM2()
 
 void Z80::IN_C(byte& in)
 {
-    // static_assert(false, "To implement");
+    assert(m_context.io_device != nullptr);
+    
+    const byte address = m_reg_BC.lo;
+    const byte data = m_context.io_device->Read(address);
+    in = data;
 
+    WriteFlag(ZERO, data == 0);
+    WriteFlag(SIGN, data & 0x80);
+    WriteFlag(HALF_CARRY, 0);
+    WriteFlag(ADD_SUBSTRACT, 0);
+    WriteFlag(PARITY_OVERFLOW, HasParity(data));
 }
 
 void Z80::IN_N(byte& in)
 {
-    // static_assert(false, "To implement");
+    // IN A (n)
+    // param in must be the accumulator (m_reg_AF.hi)
+    assert(in == m_reg_AF.hi);
+
+    const byte address = m_memory->ReadMemory(m_program_counter);
+    ++m_program_counter;
+
+    const byte data = m_context.io_device->Read(address);
+    in = data;
 }
 
 void Z80::IND()
 {
-    // static_assert(false, "To implement");
+    const byte address = m_reg_BC.lo;
+    const byte data = m_context.io_device->Read(address);
+
+    m_memory->WriteMemory(m_reg_HL.value, data);
+
+    DEC(m_reg_BC.hi);
+    DEC(m_reg_HL);
 }
 
 bool Z80::INDR()
 {
-    // static_assert(false, "To implement");
+    IND();
+
+    if (m_reg_BC.hi != 0)
+    {
+        m_program_counter -= 2;
+
+        return true;
+    }
+
     return false;
 }
 
@@ -591,12 +624,25 @@ void Z80::INC_HL()
 
 void Z80::INI()
 {
-    // static_assert(false, "Falta implementar");
+    const byte address = m_reg_BC.lo;
+    const byte data = m_context.io_device->Read(address);
+
+    m_memory->WriteMemory(m_reg_HL.value, data);
+
+    DEC(m_reg_BC.hi);
+    INC(m_reg_HL);
 }
 
 bool Z80::INIR()
 {
-    // static_assert(false, "Falta implementar");
+    INI();
+
+    if (m_reg_BC.hi = !0)
+    {
+        m_program_counter -= 2;
+        return true;
+    }
+
     return false;
 }
 
@@ -840,33 +886,72 @@ void Z80::OR_HL()
 
 void Z80::OUT_C(byte& out)
 {
-    // static_assert(false, "To implement");
+    const byte address = m_reg_BC.lo;
+    m_context.io_device->Write(address, out);
 }
 
 void Z80::OUT_N(byte& out)
 {
-    // static_assert(false, "To implement");
+    // OUT (n) A
+    assert(out == m_reg_AF.hi);
+
+    const byte address = m_memory->ReadMemory(m_program_counter);
+    ++m_program_counter; 
+
+    m_context.io_device->Write(address, out);
 }
 
 void Z80::OUTD()
 {
-    // static_assert(false, "To implement");
+    const byte value = m_memory->ReadMemory(m_reg_HL.value);
+    const byte address = m_reg_BC.lo;
+    m_context.io_device->Write(address, value);
+
+    DEC(m_reg_BC.hi);
+    DEC(m_reg_HL);
 }
 
 void Z80::OUTI()
 {
-    // static_assert(false, "To implement");
+    const byte value = m_memory->ReadMemory(m_reg_HL.value);
+
+    DEC(m_reg_BC.hi);
+
+    const byte address = m_reg_BC.lo;
+    m_context.io_device->Write(address, value);
+
+    INC(m_reg_HL);
 }
 
-bool Z80::OUTR()
+bool Z80::OTDR()
 {
-    // static_assert(false, "To implement");
+    OUTD();
+    
+    if (m_reg_BC.hi != 0)
+    {
+        m_program_counter -= 2;
+        return true;
+    }
+
+    WriteFlag(ZERO, 1);
+    WriteFlag(ADD_SUBSTRACT, 1);
+
     return false;
 }
 
 bool Z80::OTIR()
 {
-    // static_assert(false, "To implement");
+    OUTI();
+
+    if (m_reg_BC.hi != 0)
+    {
+        m_program_counter -= 2;
+        return true;
+    }
+
+    WriteFlag(ZERO, 1);
+    WriteFlag(ADD_SUBSTRACT, 1);
+
     return false;
 }
 

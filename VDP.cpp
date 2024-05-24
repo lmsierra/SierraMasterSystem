@@ -17,8 +17,7 @@ constexpr uint32_t NUM_COLOR_COMPONENTS = 3;
 // Width * height * 3 color components
 constexpr uint32_t FRAME_BUFFER_SIZE = VDP::MAX_WIDTH * VDP::MAX_HEIGHT * NUM_COLOR_COMPONENTS;
 
-VDP::VDP(Z80& cpu) :
-    m_cpu               (cpu),
+VDP::VDP() :
     m_command_word      (0x0000),
     m_is_first_byte     (false),
     m_status_flags      (0x00),

@@ -62,6 +62,14 @@ enum class SPRITE_SIZE : uint8_t
 };
 
 class Z80;
+struct VDPContext
+{
+    VDPContext() {}
+    VDPContext(Z80* _cpu) : cpu(_cpu) {}
+
+    Z80* cpu = nullptr;
+};
+
 class VDP
 {
     enum class LINE_MODE : uint8_t
@@ -76,10 +84,13 @@ public:
     static constexpr uint32_t MAX_HEIGHT = 192;
 
 public:
-    VDP() = delete;
-    VDP(Z80& cpu);
+    VDP();
     ~VDP();
 
+public:
+    inline void SetContext(const VDPContext& context) { m_context = context; }
+
+public:
     bool               Tick		                (uint32_t cycles);
     void               SetPal                   (bool is_pal);
 
@@ -119,7 +130,7 @@ private:
     void               WriteToFramBuffer        (uint32_t line, uint32_t pixel_in_line, RGBColor);
 
 private:
-    VLineFormat FindLineFormat () const;
+    VLineFormat        FindLineFormat           () const;
 
     // Register getter functions
 private:
@@ -139,7 +150,6 @@ private:
     byte               GetOverscanColor         () const;
 
 private:
-    Z80&        m_cpu;
     byte*       m_VRam;
     byte*       m_CRam;
     byte*       m_registers;
@@ -166,9 +176,12 @@ private:
     bool        m_request_interrupt;
 
 private:
-    uint8_t m_scroll_y;
+    uint8_t     m_scroll_y;
 
 private:
-    uint32_t m_lines_per_frame;
-    uint32_t m_cycles_per_line;
+    uint32_t    m_lines_per_frame;
+    uint32_t    m_cycles_per_line;
+
+private:
+    VDPContext  m_context;
 };
