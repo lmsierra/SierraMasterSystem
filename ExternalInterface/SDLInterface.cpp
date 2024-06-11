@@ -61,3 +61,8 @@ void SDLInterface::Quit()
 {
     SDL_Quit();
 }
+
+bool SDLInterface::ExitRequested(const SDL_Event& event)
+{
+    return event.type == SDL_QUIT || (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(m_window));
+}

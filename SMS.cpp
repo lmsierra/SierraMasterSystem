@@ -2,16 +2,17 @@
 #include "Z80.h"
 #include "GameRom.h"
 #include "VDP.h"
+#include "ExternalInterface/ImGUIWrapper.h"
 #include "ExternalInterface/SDLInterface.h"
 #include "IODevice.h"
 
 #include "SDL.h"
+
 #include <assert.h>
 #include <chrono>
 #include <thread>
 
 #include <iostream>
-
 
 // https://segaretro.org/Sega_Master_System/Technical_specifications
 const SystemInfo NTSCSystemInfo = SystemInfo(53693175, 262, 59.922743f, 896040);
@@ -32,7 +33,7 @@ SMS::SMS()
     m_cpu			= new Z80();
     m_vdp			= new VDP();
     m_io_device     = new IODevice();
-    m_ext_interface = new SDLInterface();
+    m_sdl_interface = new SDLInterface();
     m_game_rom		= nullptr;
 
     // Init
@@ -50,7 +51,7 @@ SMS::~SMS()
 
 void SMS::Launch(const char* path)
 {
-    assert(m_ext_interface != nullptr);
+    assert(m_sdl_interface != nullptr);
     assert(m_cpu != nullptr);
     assert(m_vdp != nullptr);
 
@@ -58,11 +59,14 @@ void SMS::Launch(const char* path)
     if (!is_game_loaded)
         return;
 
-    m_ext_interface->InitWindow(VDP::MAX_WIDTH * 2, VDP::MAX_HEIGHT * 2 , VDP::MAX_WIDTH, VDP::MAX_HEIGHT);
+    m_sdl_interface->InitWindow(VDP::MAX_WIDTH * 2, VDP::MAX_HEIGHT * 2 , VDP::MAX_WIDTH, VDP::MAX_HEIGHT);
+
+    ImGUIWrapper::Init(m_sdl_interface);
 
     std::chrono::time_point<std::chrono::steady_clock> last_frame_time;
 
-    while (true)
+    bool exit = false;
+    while (!exit)
     {
         const std::chrono::time_point<std::chrono::steady_clock> current_frame = std::chrono::steady_clock::now();
 
@@ -71,21 +75,33 @@ void SMS::Launch(const char* path)
 
         const double time_diff = m_system_info.frame_target_time - delta_time.count();
 
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            ImGUIWrapper::ProcessEvent(&event);
+            exit = m_sdl_interface->ExitRequested(event);
+        }
+
         if (m_game_rom && m_game_rom->IsValid())
         {
             Tick();
             
             // Render results
-            m_ext_interface->RenderFrame(m_vdp->GetFrameBuffer());
+            // m_sdl_interface->RenderFrame(m_vdp->GetFrameBuffer());
         }
+
+        ImGUIWrapper::NewFrame();
+        ImGUIWrapper::DrawRegisters(m_cpu);
+        ImGUIWrapper::Render(m_sdl_interface);
 
         if (time_diff > 0)
         {
-            std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(time_diff));
+           // std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(time_diff));
         }
     }
 
-    m_ext_interface->Quit();
+    ImGUIWrapper::Shutdown();
+    m_sdl_interface->Quit();
 }
 
 void SMS::Tick()

@@ -14,4 +14,5 @@ public:
 	virtual void RenderFrame(const byte* const buffer) = 0;
 	virtual void Quit() = 0;
 
+	virtual bool WasExitRequested(const void* event) = 0;
 };

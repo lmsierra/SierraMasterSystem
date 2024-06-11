@@ -22,7 +22,7 @@ struct SystemInfo
 class Z80;
 class GameRom;
 class VDP;
-class ExternalInterface;
+class SDLInterface;
 class IODevice;
 class SMS
 {
@@ -40,12 +40,12 @@ private:
     static bool IsNTSC(const GameRom& game_rom);
 
 private:
-    Z80*		       m_cpu;
-    GameRom*	       m_game_rom;
-    VDP*		       m_vdp;
-    SystemInfo	       m_system_info;
-    ExternalInterface* m_ext_interface;
-    IODevice*          m_io_device;
+    Z80*		  m_cpu;
+    GameRom*	  m_game_rom;
+    VDP*		  m_vdp;
+    SystemInfo	  m_system_info;
+    SDLInterface* m_sdl_interface;
+    IODevice*     m_io_device;
 
     double LastFrameTimestamp = 0.0;
 };
