@@ -57,6 +57,9 @@ public:
     const byte* GetMemory() const { return m_memory; }
     byte*		GetMemory()       { return m_memory; }
 
+public:
+    void LoadTest();
+
 private:
     byte* m_memory; // Map of the whole memory.
     MemoryMapping* m_memory_mapping;

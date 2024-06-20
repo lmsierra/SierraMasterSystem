@@ -8,6 +8,7 @@
 #include "MemoryMappings/MemoryMapping.h"
 #include "MemoryMappings/SegaMM.h"
 #include "MemoryMappings/ROMOnlyMM.h"
+#include "MemoryMappings/TestMM.h"
 
 Memory::Memory() : m_memory_mapping(nullptr)
 {
@@ -54,4 +55,12 @@ void Memory::Reset()
 {
     free(m_memory);
     m_memory = (byte*)calloc(0x10000 - 1, sizeof(byte));
+}
+
+void Memory::LoadTest()
+{
+    Reset();
+
+    GameRom Rom ("Test");
+    m_memory_mapping = new TestMM(*this, Rom);
 }

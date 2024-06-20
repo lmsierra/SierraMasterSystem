@@ -71,6 +71,7 @@ public:
     Register&   GetPrefixedHL();
     uint32_t    Tick();
     void        LoadGame(GameRom& rom);
+    void        LoadTest();
 
 public:
     //  For testing purposes

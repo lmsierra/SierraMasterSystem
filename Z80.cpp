@@ -168,6 +168,11 @@ void Z80::LoadGame(GameRom& rom)
     m_memory->LoadRom(rom);
 }
 
+void Z80::LoadTest()
+{
+    m_memory->LoadTest();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////
 
 /*
@@ -983,8 +988,8 @@ bool Z80::OTIR()
 
 void Z80::POP(Register& reg)
 {
-    byte lo = m_memory->ReadMemory(m_stack_pointer + 1);
-    byte hi = m_memory->ReadMemory(m_stack_pointer + 2);
+    byte lo = m_memory->ReadMemory(m_stack_pointer);
+    byte hi = m_memory->ReadMemory(m_stack_pointer + 1);
     m_stack_pointer += 2;
     reg.value = lo + (hi << 8);
 }
