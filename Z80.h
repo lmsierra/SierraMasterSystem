@@ -11,8 +11,8 @@ union Register
     word value;
     struct
     {
-        byte hi;
         byte lo;
+        byte hi;
     };
 };
 
@@ -39,6 +39,8 @@ struct Z80Context
 
 class Z80;
 using OPCodeFunc = uint8_t(*)(Z80&);
+using TestCodeFunc = bool(*)(Z80&);
+
 /*
     
 */
@@ -60,6 +62,8 @@ public: // inline
     inline void SetContext(const Z80Context& context) { m_context = context; }
 
 public:
+    void        Reset();
+
     bool        ReadFlag(FLAG flag);
     word        ReadWord();
     byte        ReadByte();
@@ -67,6 +71,10 @@ public:
     Register&   GetPrefixedHL();
     uint32_t    Tick();
     void        LoadGame(GameRom& rom);
+
+public:
+    //  For testing purposes
+    Memory* GetMemory() const { return m_memory; }
 
 private:
     uint32_t    ProcessOPCode(byte opcode, OPCodeFunc[256]);

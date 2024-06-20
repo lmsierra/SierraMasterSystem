@@ -38,7 +38,33 @@ Z80::Z80() :
 
 Z80::~Z80()
 {
+   
+}
 
+void Z80::Reset()
+{
+    //m_memory = new Memory();
+    m_reg_AF = 0x0040;
+    m_reg_BC = 0x0000;
+    m_reg_DE = 0x0000;
+    m_reg_HL = 0x0000;
+    m_reg_AF_shadow = 0x0000;
+    m_reg_BC_shadow = 0x0000;
+    m_reg_DE_shadow = 0x0000;
+    m_reg_HL_shadow = 0x0000;
+    m_reg_IX = 0xFFFF;
+    m_reg_IY = 0xFFFF;
+    m_program_counter = 0x0000;
+    m_stack_pointer = 0xDFF0;
+    m_cycle_count = 0x0000;
+    m_current_prefix = 0x0000;
+    m_reg_interrupt = 0x00;
+    m_reg_refresh = 0x00;
+    m_halt = false;
+    m_IFF1 = false;
+    m_IFF2 = false;
+    m_after_EI = false;
+    m_interrupt_mode = InterruptMode::MODE_0;
 }
 
 uint32_t Z80::Tick()
@@ -957,8 +983,8 @@ bool Z80::OTIR()
 
 void Z80::POP(Register& reg)
 {
-    byte lo = m_memory->ReadMemory(m_stack_pointer);
-    byte hi = m_memory->ReadMemory(m_stack_pointer + 1);
+    byte lo = m_memory->ReadMemory(m_stack_pointer + 1);
+    byte hi = m_memory->ReadMemory(m_stack_pointer + 2);
     m_stack_pointer += 2;
     reg.value = lo + (hi << 8);
 }
@@ -966,8 +992,8 @@ void Z80::POP(Register& reg)
 void Z80::PUSH(const Register reg)
 {
     const word address = m_stack_pointer;
-    m_memory->WriteMemory(address,     reg.hi);
-    m_memory->WriteMemory(address - 1, reg.lo);
+    m_memory->WriteMemory(address - 1, reg.hi);
+    m_memory->WriteMemory(address - 2, reg.lo);
     m_stack_pointer -= 2;
 }
 
