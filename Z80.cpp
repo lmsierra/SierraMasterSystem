@@ -521,9 +521,14 @@ void Z80::EX(Register& reg, Register& shd)
 void Z80::EX(Register& reg)
 {
     word address    = m_stack_pointer;
-    m_stack_pointer = reg.value;
+    byte reg_lo     = reg.lo;
+    byte reg_hi     = reg.hi;
+
     reg.lo          = m_memory->ReadMemory(address);
     reg.hi          = m_memory->ReadMemory(address + 1);
+
+    m_memory->WriteMemory(address, reg_lo);
+    m_memory->WriteMemory(address + 1, reg_hi);
 }
 
 void Z80::EX_SPHL()
