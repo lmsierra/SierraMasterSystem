@@ -236,7 +236,7 @@ def create_opcodes_functions(src, func_prefix, time_table, stored_set = None, ti
             call_line += ')'
 
             if time_table_branched and time_table_branched[num] != 0:
-                content += '\t\treturn %i ? %s : %i;' % (time_table_branched[num], call_line, time_table[num])
+                content += '\t\treturn %s ? %i : %i;' % (call_line, time_table_branched[num], time_table[num])
             else:
                 content += '\t\t%s;' % call_line
                 content += '\n\t\treturn %i;' % (time_table[num])
